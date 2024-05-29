@@ -9,6 +9,12 @@ from tkinter import filedialog
 
 class App:
     def __init__(self, main_root):
+        self.start_button = None
+        self.delete_option_check_box = None
+        self.progress_bar_excel_value = None
+        self.progress_bar_csv_value = None
+        self.progress_bar_excel = None
+        self.progress_bar_csv = None
         self.price_update_frame = None
         self.data_exchange_frame = None
         self.csv_data = None
@@ -19,6 +25,7 @@ class App:
         self.excel_starting_row = tk.StringVar()
         self.csv_starting_row = tk.StringVar()
         self.root = None
+        self.price_update_delete_option = tk.BooleanVar()
         self.settings_name = ''
         self.settings = json_handler.load_settings('exchange_settings.json')
         if self.settings == {}:
@@ -44,6 +51,8 @@ class App:
         self.set_data_exchange_page()
         self.csv_progress_counter = tk.StringVar()
         self.excel_progress_counter = tk.StringVar()
+        self.set_price_update_page()
+
 
     def set_main_window(self, main_root):
         try:
@@ -141,26 +150,32 @@ class App:
         delete_button.grid(row=2, column=5, padx=5, pady=5)
 
     def set_price_update_page(self):
-        try:
-            self.price_update_frame = ttk.Frame(self.notebook)
-            self.price_update_frame.grid(row=0, column=0, sticky='nsew')
-            self.notebook.add(self.price_update_frame, text='Aktualizacja cen')
-            self.progress_bar_csv = ttk.Progressbar(self.price_update_frame, orient='horizontal', length=300,
-                                           mode="determinate")
-            self.progress_bar_csv.grid(row=1, column=2, padx=5, pady=5)
-            self.progress_bar_excel = ttk.Progressbar(self.price_update_frame, orient='horizontal', length=300,
-                                           mode="determinate")
-            self.progress_bar_excel.grid(row=2, column=2, padx=5, pady=5)
-            self.progress_bar_csv_value = ttk.Label(self.price_update_frame, textvariable=self.csv_progress_counter)
-            self.progress_bar_csv_value.grid(row=1, column=1, padx=5, pady=5)
-            self.progress_bar_excel_value = ttk.Label(self.price_update_frame, textvariable=self.excel_progress_counter)
-            self.progress_bar_excel_value.grid(row=1, column=1, padx=5, pady=5)
+        self.csv_progress_counter.set('0')
+        self.excel_progress_counter.set('0')
+        self.price_update_frame = ttk.Frame(self.notebook)
+        self.price_update_frame.grid(row=0, column=0, sticky='nsew')
+        self.notebook.add(self.price_update_frame, text='Aktualizacja cen')
+        self.progress_bar_csv = ttk.Progressbar(self.price_update_frame, orient='horizontal', length=300,
+                                                mode="determinate")
+        self.progress_bar_csv.grid(row=1, column=1, padx=5, pady=5)
+        self.progress_bar_excel = ttk.Progressbar(self.price_update_frame, orient='horizontal', length=300,
+                                                  mode="determinate")
+        self.progress_bar_excel.grid(row=2, column=1, padx=5, pady=5)
+        self.progress_bar_csv_value = ttk.Label(self.price_update_frame, textvariable=self.csv_progress_counter)
+        self.progress_bar_csv_value.grid(row=1, column=1, padx=5, pady=5)
+        self.progress_bar_excel_value = ttk.Label(self.price_update_frame, textvariable=self.excel_progress_counter)
+        self.progress_bar_excel_value.grid(row=2, column=1, padx=5, pady=5)
+        self.delete_option_check_box = ttk.Checkbutton(self.price_update_frame, variable=self.price_update_delete_option)
+        self.delete_option_check_box.grid(row=3, column=1, padx=5, pady=5)
+        delete_option_label = ttk.Label(self.price_update_frame, text='Usuń nieznalezione w cenniku wpisy')
+        delete_option_label.grid(row=3, column=0, padx=5, pady=5)
+        progress_label_csv = ttk.Label(self.price_update_frame, text='Usuń nieznalezione w cenniku wpisy')
+        progress_label_csv.grid(row=1, column=0, padx=5, pady=5)
+        progress_label_excel = ttk.Label(self.price_update_frame, text='Postęp pliku CSV')
+        progress_label_excel.grid(row=2, column=0, padx=5, pady=5)
+        self.start_button = ttk.Button(self.price_update_frame, text='Postęp wyszukiwania pozycji', command=self.update_prices)
+        self.start_button.grid(row=4, column=1, padx=10, pady=10)
 
-
-
-
-        except Exception as e:
-            raise Exception(f'Błąd tworzenia strony obsługi plików: {e}')
 
     def save_data_exchange_profile(self):
         new_settings = {
@@ -299,6 +314,18 @@ class App:
             self.excel_data, _ = excel_handler.xlsx_read(self.excel_raw_path.get())
             self.excel_columns_count, _ = excel_handler.get_columns_count(self.excel_data)
             self.update_data_exchange_frame()
+
+    def update_prices(self):
+        for i in range(int(self.csv_starting_row.get()), len(self.csv_data)):
+            self.start_button.config(state='disabled')
+            self.progress_bar_csv_value.set(str(i) + ' / ' + str(len(self.csv_data)))
+            self.progress_bar_csv['value'] = (i / len(self.csv_data)) * 100
+            self.price_update_frame.update()
+            search = self.csv_data[i][int(self.csv_search_column.get())]
+            for j in range(int(self.excel_starting_row.get()), len(self.excel_data)):
+                self.progress_bar_excel_value.set(str(j) + ' / ' + str(len(self.excel_data)))
+                self.progress_bar_excel['value'] = (j / len(self.excel_data)) * 100
+                self.price_update_frame.update()
 
 
 if __name__ == '__main__':
