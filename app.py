@@ -53,7 +53,6 @@ class App:
         self.excel_progress_counter = tk.StringVar()
         self.set_price_update_page()
 
-
     def set_main_window(self, main_root):
         try:
             self.root = main_root
