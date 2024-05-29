@@ -1,15 +1,41 @@
-import openpyxl
+import os.path
+import pandas as pd
 
-def read_excel_data(path, sheet_name, starting_row):
+
+def xlsx_read(path):
     try:
-        workbook = openpyxl.load_workbook(path)
-        sheet = workbook[sheet_name]
-        data = []
-        for row in sheet.iter_rows(values_only=True):
-            data.append(row)
-        headers = data[starting_row]
-        data = data[starting_row+1:]  # Pomijamy pierwszy wiersz z nagłówkami
-        print(f"Dane zostały pomyślnie wczytane z arkusza '{sheet_name}' w pliku {path}.")
-        return headers, data
+        data = pd.read_excel(path)
+        return data, None
     except Exception as e:
-        raise Exception(f"Wystąpił błąd podczas wczytywania danych z arkusza '{sheet_name}' w pliku Excel: {str(e)}")
+        return None, e
+
+
+def get_column_data(data, column):
+    try:
+        result = data.iloc[:, column - 1]
+        return result, None
+    except Exception as e:
+        return None, e
+
+
+def get_columns_count(data):
+    try:
+        return data.shape[1], None
+    except Exception as e:
+        return None, e
+
+
+def get_rows_count(data):
+    try:
+        length = len(data)
+        return length, None
+    except Exception as e:
+        return None, e
+
+
+def get_row_data(data, row_number):
+    try:
+        row_data = data.iloc[row_number - 2]
+        return row_data, None
+    except Exception as e:
+        return None, e

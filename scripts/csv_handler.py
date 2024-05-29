@@ -1,45 +1,57 @@
 import csv
 
-def read_csv(file_path):
+
+def read_csv(path):
     try:
-        with open(file_path, 'r', newline='', encoding='windows-1250') as file:
-            reader = csv.reader(file, delimiter=';')
+        with open(path, 'r', newline='', encoding='windows-1250') as csv_file:
+            reader = csv.reader(csv_file, delimiter=';')
             headers = next(reader)
             data = [row for row in reader]
-        print(f"Dane zostały pomyślnie wczytane z pliku {file_path}.")
-        return headers, data
+        return None, headers, data
     except Exception as e:
-        raise Exception(f"Wystąpił błąd podczas wczytywania pliku CSV: {str(e)}")
+        return e, None, None
 
-def save_csv(file_name, headers, data):
+
+def save_csv(path, headers, data):
     try:
-        with open(file_name, 'w', newline='', encoding='windows-1250') as file:
-            writer = csv.writer(file, delimiter=';')
+        with open(path, 'w', newline='', encoding='windows-1250') as csv_file:
+            writer = csv.writer(csv_file, delimiter=';')
             writer.writerow(headers)
             for row in data:
                 writer.writerow(row)
-        print(f"Dane zostały pomyślnie zapisane do pliku {file_name}.")
+        return True, None
     except Exception as e:
-        raise Exception(f"Wystąpił błąd podczas zapisywania danych: {str(e)}")
+        return False, e
 
-def multiple_data_check(data, selected_column):
+
+def multiple_data_check(data, column):
     try:
         id_count = {}
         for row in data:
-            id_value = row[selected_column]
+            id_value = row[column]
             if id_value in id_count:
                 id_count[id_value] += 1
             else:
                 id_count[id_value] = 1
         duplicates = {k: v for k, v in id_count.items() if v > 1}
-        return duplicates
+        return duplicates, None
     except Exception as e:
-        raise Exception(f"Wystąpił błąd podczas sprawdzania danych: {str(e)}")
+        return None, e
 
-def remove_entry(data, selected_column, value):
-    updated_data = [row for row in data if row[selected_column] != value]
-    if len(data) == len(updated_data):
-        print(f"Nie znaleziono wpisu z wartością '{value}' w kolumnie {selected_column}.")
-    else:
-        print(f"Wpis z wartością '{value}' w kolumnie {selected_column} został usunięty.")
-    return updated_data
+
+def remove_entry(data, column, value):
+    try:
+        updated_data = [row for row in data if row[column] != value]
+        if len(data) == len(updated_data):
+            return None, None
+        else:
+            return updated_data, None
+    except Exception as e:
+        return None, e
+
+
+def update_entry(data, csv_index, csv_column, excel_value):
+    row = data[csv_index - 2]
+    print(row)
+    row[csv_column - 1] = str(excel_value)
+    print(row)
