@@ -176,7 +176,6 @@ class App:
         self.start_button = ttk.Button(self.price_update_frame, text='Postęp wyszukiwania pozycji', command=self.update_prices)
         self.start_button.grid(row=4, column=1, padx=10, pady=10)
 
-
     def save_data_exchange_profile(self):
         new_settings = {
             'excel_discount_g': self.excel_discount_group_column.get(),
