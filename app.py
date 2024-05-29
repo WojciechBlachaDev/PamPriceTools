@@ -1,5 +1,6 @@
 from scripts import csv_handler
 from scripts import excel_handler
+from scripts import json_handler
 import pandas as pd
 import tkinter as tk
 from tkinter import ttk
@@ -8,13 +9,20 @@ from tkinter import filedialog
 
 class App:
     def __init__(self, main_root):
+        self.price_update_frame = None
         self.data_exchange_frame = None
         self.csv_data = None
         self.headers = None
         self.excel_data = None
         self.files_frame = None
         self.notebook = None
+        self.excel_starting_row = tk.StringVar()
+        self.csv_starting_row = tk.StringVar()
         self.root = None
+        self.settings_name = ''
+        self.settings = json_handler.load_settings('exchange_settings.json')
+        if self.settings == {}:
+            json_handler.save_settings(self.settings, 'exchange_settings.json')
         self.csv_raw_path = tk.StringVar()
         self.excel_raw_path = tk.StringVar()
         self.excel_columns_count = 0
@@ -29,10 +37,13 @@ class App:
         self.csv_discount_group_column = None
         self.csv_base_price_column = None
         self.csv_catalogue_price_column = None
+        self.current_settings = None
         self.set_main_window(main_root)
         self.set_notebook()
         self.set_file_page()
         self.set_data_exchange_page()
+        self.csv_progress_counter = tk.StringVar()
+        self.excel_progress_counter = tk.StringVar()
 
     def set_main_window(self, main_root):
         try:
@@ -71,6 +82,9 @@ class App:
     def set_data_exchange_page(self):
         excel_columns = []
         csv_columns = []
+        settings_names = []
+        for key, value in self.settings.items():
+            settings_names.append(key)
         for i in range(self.excel_columns_count):
             excel_columns.append(str(i + 1))
         for i in range(self.csv_columns_count):
@@ -109,13 +123,108 @@ class App:
         self.csv_catalogue_price_column = ttk.Combobox(self.data_exchange_frame, values=csv_columns)
         self.csv_catalogue_price_column.grid(row=9, column=0, padx=5, pady=5)
 
+        self.set_descriptions('Wprowadź wiersz startowy danych w plikach', 10)
+        excel_starting_row = ttk.Entry(self.data_exchange_frame, textvariable=self.excel_starting_row)
+        excel_starting_row.grid(row=11, column=2, padx=5, pady=5)
+        csv_starting_row = ttk.Entry(self.data_exchange_frame, textvariable=self.csv_starting_row)
+        csv_starting_row.grid(row=11, column=0, padx=5, pady=5)
 
+        settings_label = ttk.Label(self.data_exchange_frame, text='Zapisane ustawienia')
+        settings_label.grid(row=0, column=4, padx=10, pady=10)
+        self.current_settings = ttk.Combobox(self.data_exchange_frame, values=settings_names)
+        self.current_settings.grid(row=1, column=4, padx=10, pady=10)
+        save_button = ttk.Button(self.data_exchange_frame, text='Zapisz', command=self.save_data_exchange_profile)
+        save_button.grid(row=2, column=3, padx=5, pady=5)
+        load_button = ttk.Button(self.data_exchange_frame, text='Ładuj', command=self.load_data_exchange_settings)
+        load_button.grid(row=2, column=4, padx=5, pady=5)
+        delete_button = ttk.Button(self.data_exchange_frame, text='Usuń', command=self.delete_data_exchange_settings)
+        delete_button.grid(row=2, column=5, padx=5, pady=5)
+
+    def set_price_update_page(self):
+        try:
+            self.price_update_frame = ttk.Frame(self.notebook)
+            self.price_update_frame.grid(row=0, column=0, sticky='nsew')
+            self.notebook.add(self.price_update_frame, text='Aktualizacja cen')
+            self.progress_bar_csv = ttk.Progressbar(self.price_update_frame, orient='horizontal', length=300,
+                                           mode="determinate")
+            self.progress_bar_csv.grid(row=1, column=2, padx=5, pady=5)
+            self.progress_bar_excel = ttk.Progressbar(self.price_update_frame, orient='horizontal', length=300,
+                                           mode="determinate")
+            self.progress_bar_excel.grid(row=2, column=2, padx=5, pady=5)
+            self.progress_bar_csv_value = ttk.Label(self.price_update_frame, textvariable=self.csv_progress_counter)
+            self.progress_bar_csv_value.grid(row=1, column=1, padx=5, pady=5)
+            self.progress_bar_excel_value = ttk.Label(self.price_update_frame, textvariable=self.excel_progress_counter)
+            self.progress_bar_excel_value.grid(row=1, column=1, padx=5, pady=5)
+
+
+
+
+        except Exception as e:
+            raise Exception(f'Błąd tworzenia strony obsługi plików: {e}')
+
+    def save_data_exchange_profile(self):
+        new_settings = {
+            'excel_discount_g': self.excel_discount_group_column.get(),
+            'csv_discount_g': self.csv_discount_group_column.get(),
+            'excel_discount_v': self.excel_discount_value_column.get(),
+            'csv_discount_v': self.csv_discount_value_column.get(),
+            'excel_base_price': self.excel_base_price_column.get(),
+            'csv_base_price': self.csv_base_price_column.get(),
+            'excel_cat_price': self.excel_catalogue_price_column.get(),
+            'csv_cat_price': self.csv_catalogue_price_column.get(),
+            'excel_search': self.excel_search_column.get(),
+            'csv_search': self.csv_search_column.get(),
+            'excel_start': self.excel_starting_row.get(),
+            'csv_start': self.csv_starting_row.get()
+        }
+        self.settings[self.current_settings.get()] = new_settings
+        json_handler.save_settings(self.settings, 'exchange_settings.json')
+        self.update_data_exchange_frame_settings()
+
+    def load_data_exchange_settings(self):
+        self.settings = json_handler.load_settings('exchange_settings.json')
+        for key, value in self.settings.items():
+            if key == self.current_settings.get():
+                self.excel_discount_group_column.set(self.settings[key]['excel_discount_g'])
+                self.csv_discount_group_column.set(self.settings[key]['csv_discount_g'])
+                self.excel_discount_value_column.set(self.settings[key]['excel_discount_v'])
+                self.csv_discount_value_column.set(self.settings[key]['csv_discount_v'])
+                self.excel_base_price_column.set(self.settings[key]['excel_base_price'])
+                self.csv_base_price_column.set(self.settings[key]['csv_base_price'])
+                self.excel_catalogue_price_column.set(self.settings[key]['excel_cat_price'])
+                self.csv_catalogue_price_column.set(self.settings[key]['csv_cat_price'])
+                self.excel_search_column.set(self.settings[key]['excel_search'])
+                self.csv_search_column.set(self.settings[key]['csv_search'])
+                self.excel_starting_row.set(self.settings[key]['excel_start'])
+                self.csv_starting_row.set(self.settings[key]['csv_start'])
+
+    def delete_data_exchange_settings(self):
+        new_settings = {}
+        for key, value in self.settings.items():
+            if key != self.current_settings.get():
+                new_settings[key] = value
+        json_handler.save_settings(new_settings, 'exchange_settings.json')
+        self.settings = new_settings
+        self.update_data_exchange_frame()
+
+    def update_data_exchange_frame_settings(self):
+        settings_names = []
+        for key, value in self.settings.items():
+            settings_names.append(key)
+        selected_setting = self.current_settings.get()
+        self.current_settings.destroy()
+        self.current_settings = ttk.Combobox(self.data_exchange_frame, values=settings_names)
+        self.current_settings.grid(row=1, column=4, padx=10, pady=10)
+        self.current_settings.set(selected_setting)
 
     def update_data_exchange_frame(self):
         for widget in self.data_exchange_frame.winfo_children():
             widget.destroy()
         excel_columns = []
         csv_columns = []
+        settings_names = []
+        for key, value in self.settings.items():
+            settings_names.append(key)
         for i in range(self.excel_columns_count):
             excel_columns.append(str(i + 1))
         for i in range(self.csv_columns_count):
@@ -150,6 +259,23 @@ class App:
         self.csv_catalogue_price_column = ttk.Combobox(self.data_exchange_frame, values=csv_columns)
         self.csv_catalogue_price_column.grid(row=9, column=0, padx=5, pady=5)
 
+        self.set_descriptions('Wprowadź wiersz startowy danych w plikach', 10)
+        excel_starting_row = ttk.Entry(self.data_exchange_frame, textvariable=self.excel_starting_row)
+        excel_starting_row.grid(row=11, column=2, padx=5, pady=5)
+        csv_starting_row = ttk.Entry(self.data_exchange_frame, textvariable=self.csv_starting_row)
+        csv_starting_row.grid(row=11, column=0, padx=5, pady=5)
+
+        settings_label = ttk.Label(self.data_exchange_frame, text='Zapisane ustawienia')
+        settings_label.grid(row=0, column=4, padx=10, pady=10)
+        self.current_settings = ttk.Combobox(self.data_exchange_frame, values=settings_names)
+        self.current_settings.grid(row=1, column=4, padx=10, pady=10)
+        save_button = ttk.Button(self.data_exchange_frame, text='Zapisz', command=self.save_data_exchange_profile)
+        save_button.grid(row=2, column=3, padx=5, pady=5)
+        load_button = ttk.Button(self.data_exchange_frame, text='Ładuj', command=self.load_data_exchange_settings)
+        load_button.grid(row=2, column=4, padx=5, pady=5)
+        delete_button = ttk.Button(self.data_exchange_frame, text='Usuń', command=self.delete_data_exchange_settings)
+        delete_button.grid(row=2, column=5, padx=5, pady=5)
+
     def set_descriptions(self, text, row):
         label_search_columns = ttk.Label(self.data_exchange_frame, text=text)
         label_search_columns.grid(row=row, column=1, padx=5, pady=5)
@@ -173,6 +299,7 @@ class App:
             self.excel_data, _ = excel_handler.xlsx_read(self.excel_raw_path.get())
             self.excel_columns_count, _ = excel_handler.get_columns_count(self.excel_data)
             self.update_data_exchange_frame()
+
 
 if __name__ == '__main__':
     root = tk.Tk()
