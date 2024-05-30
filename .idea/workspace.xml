@@ -5,7 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="74ebed60-b0e2-4468-941e-bb2d66c7508d" name="Changes" comment="BBB">
+      <change beforePath="$PROJECT_DIR$/.idea/PamPriceTools.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/PamPriceTools.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/exchange_settings.json" beforeDir="false" afterPath="$PROJECT_DIR$/exchange_settings.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/excel_handler.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/excel_handler.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -22,21 +27,21 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
-  "lastFilter": {
-    "state": "OPEN",
-    "assignee": "WojciechBlachaDev"
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;WojciechBlachaDev&quot;
   }
-}]]></component>
+}</component>
   <component name="GithubPullRequestsUISettings"><![CDATA[{
   "selectedUrlAndAccountId": {
-    "url": "https://github.com/WojciechBlachaDev/PamPriceTools",
-    "accountId": "f4e8a58c-4146-4680-804f-a30dbc0bdeb9"
+    "url": "https://github.com/WojciechBlachaDev/PamPriceTools.git",
+    "accountId": "f5cd6ecf-eeff-4aee-a818-7405768e7528"
   }
 }]]></component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 6
-}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 6
+}</component>
   <component name="ProjectId" id="2h8RxMc5G5hMfxln7NxROxSYZr9" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
@@ -46,9 +51,11 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "Python.app.executor": "Run",
+    "Python.csv_handler.executor": "Debug",
     "Python.excel_handler.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "git-widget-placeholder": "master",
+    "ignore.virus.scanning.warn.message": "true",
     "last_opened_file_path": "C:/Users/MSI/Documents/PythonProjects/PamPriceTools"
   }
 }]]></component>
@@ -57,6 +64,7 @@
       <recent name="C:\Users\MSI\Documents\PythonProjects\PamPriceTools" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\Wojtek\PycharmProjects\PamPriceTools" />
       <recent name="C:\Users\MSI\Documents\PythonProjects\PamPriceTools\scripts" />
     </key>
   </component>
@@ -130,9 +138,9 @@
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/app.py</url>
-          <line>197</line>
-          <option name="timeStamp" value="3" />
+          <url>file://$PROJECT_DIR$/scripts/csv_handler.py</url>
+          <line>15</line>
+          <option name="timeStamp" value="5" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
