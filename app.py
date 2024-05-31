@@ -1,3 +1,5 @@
+import os
+import ctypes
 from scripts import csv_handler
 from scripts import excel_handler
 from scripts import json_handler
@@ -27,9 +29,9 @@ class App:
         self.root = None
         self.price_update_delete_option = tk.BooleanVar()
         self.settings_name = ''
-        self.settings = json_handler.load_settings('exchange_settings.json')
+        self.settings = json_handler.load_settings(os.path.join(os.getcwd(), 'exchange_settings.json'))
         if self.settings == {}:
-            json_handler.save_settings(self.settings, 'exchange_settings.json')
+            json_handler.save_settings(self.settings, os.path.join(os.getcwd(), 'exchange_settings.json'))
         self.csv_raw_path = tk.StringVar()
         self.excel_raw_path = tk.StringVar()
         self.excel_columns_count = 0
@@ -57,6 +59,10 @@ class App:
         try:
             self.root = main_root
             self.root.title('Pam Price Tools')
+            self.root.iconbitmap(os.path.join(os.getcwd(), 'app_icon.ico'))
+            myappid = "BRK_Windows.PamPriceTools.PamPriceTools.version_0_0_1"
+            ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
+
         except Exception as e:
             raise Exception(f'Błąd tworzenia okna głównego aplikacji: {e}')
 
@@ -157,13 +163,8 @@ class App:
         self.progress_bar_csv = ttk.Progressbar(self.price_update_frame, orient='horizontal', length=300,
                                                 mode="determinate")
         self.progress_bar_csv.grid(row=1, column=1, padx=5, pady=5)
-        self.progress_bar_excel = ttk.Progressbar(self.price_update_frame, orient='horizontal', length=300,
-                                                  mode="determinate")
-        self.progress_bar_excel.grid(row=2, column=1, padx=5, pady=5)
         self.progress_bar_csv_value = ttk.Label(self.price_update_frame, textvariable=self.csv_progress_counter)
         self.progress_bar_csv_value.grid(row=1, column=2, padx=5, pady=5)
-        self.progress_bar_excel_value = ttk.Label(self.price_update_frame, textvariable=self.excel_progress_counter)
-        self.progress_bar_excel_value.grid(row=2, column=2, padx=5, pady=5)
         self.delete_option_check_box = ttk.Checkbutton(self.price_update_frame,
                                                        variable=self.price_update_delete_option)
         self.delete_option_check_box.grid(row=3, column=1, padx=5, pady=5)
@@ -171,8 +172,6 @@ class App:
         delete_option_label.grid(row=3, column=0, padx=5, pady=5)
         progress_label_csv = ttk.Label(self.price_update_frame, text='Postęp pliku CSV')
         progress_label_csv.grid(row=1, column=0, padx=5, pady=5)
-        progress_label_excel = ttk.Label(self.price_update_frame, text='Przeszukiwanie pliku Excel')
-        progress_label_excel.grid(row=2, column=0, padx=5, pady=5)
         self.start_button = ttk.Button(self.price_update_frame,
                                        text='Aktualizuj bazę', command=self.update_prices)
         self.start_button.grid(row=4, column=1, padx=10, pady=10)
@@ -193,11 +192,11 @@ class App:
             'csv_start': self.csv_starting_row.get()
         }
         self.settings[self.current_settings.get()] = new_settings
-        json_handler.save_settings(self.settings, 'exchange_settings.json')
+        json_handler.save_settings(self.settings, os.path.join(os.getcwd(), 'exchange_settings.json'))
         self.update_data_exchange_frame_settings()
 
     def load_data_exchange_settings(self):
-        self.settings = json_handler.load_settings('exchange_settings.json')
+        self.settings = json_handler.load_settings(os.path.join(os.getcwd(), 'exchange_settings.json'))
         for key, value in self.settings.items():
             if key == self.current_settings.get():
                 self.excel_discount_group_column.set(self.settings[key]['excel_discount_g'])
@@ -218,7 +217,7 @@ class App:
         for key, value in self.settings.items():
             if key != self.current_settings.get():
                 new_settings[key] = value
-        json_handler.save_settings(new_settings, 'exchange_settings.json')
+        json_handler.save_settings(new_settings, os.path.join(os.getcwd(), 'exchange_settings.json'))
         self.settings = new_settings
         self.update_data_exchange_frame()
 
@@ -304,16 +303,20 @@ class App:
         if path is not None:
             self.csv_raw_path.set(path)
             _, self.headers, self.csv_data = csv_handler.read_csv(self.csv_raw_path.get())
-            self.csv_columns_count = len(self.headers)
+            self.csv_columns_count = len(self.csv_data[0])
             self.update_data_exchange_frame()
 
     def get_excel_path(self):
         path = filedialog.askopenfilename(filetypes=[("Excel Files", "*.xlsx")])
+        self.root.config(cursor='wait')
+        self.root.update()
         if path is not None:
             self.excel_raw_path.set(path)
             self.excel_data, _ = excel_handler.xlsx_read(self.excel_raw_path.get())
             self.excel_columns_count, _ = excel_handler.get_columns_count(self.excel_data)
             self.update_data_exchange_frame()
+        self.root.config(cursor='')
+        self.root.update()
 
     def update_prices(self):
         position_found = False
@@ -326,9 +329,6 @@ class App:
             self.price_update_frame.update()
             search = self.csv_data[i][int(self.csv_search_column.get()) - 1]
             for j in range(int(self.excel_starting_row.get()), len(self.excel_data)):
-                self.excel_progress_counter.set(f"{j} / {len(self.excel_data)}")
-                self.progress_bar_excel['value'] = (j / len(self.excel_data)) * 100
-                self.price_update_frame.update()
                 if search == search_values[j]:
                     position_found = True
                     excel_row = excel_handler.get_row_data(self.excel_data, j + 2)
@@ -379,28 +379,20 @@ class App:
             if position_found:
                 position_found = False
         if self.delete_option_check_box and len(positions_not_found) > 0:
-            delete_progress_bar = ttk.Progressbar(self.price_update_frame, orient='horizontal', length=300,
-                                                mode="determinate",)
-            delete_progress_bar.grid(row=5, column=1, padx=5, pady=5)
             for i in range(len(positions_not_found)):
                 updated_data, _ = csv_handler.remove_entry(self.csv_data, int(self.csv_search_column.get()) - 1,
                                                            positions_not_found[i])
-                delete_progress_bar['value'] = i / len([positions_not_found]) * 100
-                self.price_update_frame.update()
                 if updated_data is not None:
                     self.csv_data = updated_data
-        new_path = filedialog.asksaveasfile(filetypes=[("CSV Files", "*.csv")])
+        new_path = filedialog.asksaveasfilename(defaultextension=".csv", filetypes=[("CSV Files", "*.csv")])
         print(new_path)
-        if new_path is not None:
-            path = str(new_path.name) + '.csv'
-            if path is not None and path != '.csv':
-                csv_handler.save_csv(path, self.headers, self.csv_data)
-        self.csv_progress_counter.set('100')
-        self.progress_bar_csv['value'] = (len(self.csv_data) / len(self.csv_data))
-        self.excel_progress_counter.set('100')
-        self.progress_bar_excel['value'] = (len(self.excel_data) / len(self.excel_data))
+        if new_path is not None and new_path != '' and new_path != '.csv':
+            csv_handler.save_csv(new_path, self.headers, self.csv_data)
+        self.csv_progress_counter.set(f'Wielkość po operacji: {len(self.csv_data) + 1}')
+        self.progress_bar_csv['value'] = 100
         self.start_button.config(state='enabled')
         self.price_update_frame.update()
+
 
 if __name__ == '__main__':
     root = tk.Tk()

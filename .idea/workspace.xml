@@ -5,12 +5,29 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="74ebed60-b0e2-4468-941e-bb2d66c7508d" name="Changes" comment="BBB">
+      <change afterPath="$PROJECT_DIR$/PamPriceTools.spec" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app_icon.ico" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/PamPriceTools/Analysis-00.toc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/PamPriceTools/EXE-00.toc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/PamPriceTools/PKG-00.toc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/PamPriceTools/PYZ-00.pyz" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/PamPriceTools/PYZ-00.toc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/PamPriceTools/PamPriceTools.pkg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/PamPriceTools/Tree-00.toc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/PamPriceTools/Tree-01.toc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/PamPriceTools/Tree-02.toc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/PamPriceTools/base_library.zip" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/PamPriceTools/warn-PamPriceTools.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/PamPriceTools/xref-PamPriceTools.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dist/PamPriceTools.exe" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dist/app_icon.ico" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/PamPriceTools.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/PamPriceTools.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/exchange_settings.json" beforeDir="false" afterPath="$PROJECT_DIR$/exchange_settings.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/excel_handler.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/excel_handler.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app_console.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/requrements.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/csv_handler.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/csv_handler.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -36,7 +53,7 @@
   <component name="GithubPullRequestsUISettings"><![CDATA[{
   "selectedUrlAndAccountId": {
     "url": "https://github.com/WojciechBlachaDev/PamPriceTools.git",
-    "accountId": "f5cd6ecf-eeff-4aee-a818-7405768e7528"
+    "accountId": "f4e8a58c-4146-4680-804f-a30dbc0bdeb9"
   }
 }]]></component>
   <component name="ProjectColorInfo">{
@@ -56,14 +73,16 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "git-widget-placeholder": "master",
     "ignore.virus.scanning.warn.message": "true",
-    "last_opened_file_path": "C:/Users/MSI/Documents/PythonProjects/PamPriceTools"
+    "last_opened_file_path": "C:/Users/MSI/Documents/PythonProjects/PPT/dist"
   }
 }]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\MSI\Documents\PythonProjects\PPT\dist" />
       <recent name="C:\Users\MSI\Documents\PythonProjects\PamPriceTools" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\MSI\Documents\PythonProjects\PPT" />
       <recent name="C:\Users\Wojtek\PycharmProjects\PamPriceTools" />
       <recent name="C:\Users\MSI\Documents\PythonProjects\PamPriceTools\scripts" />
     </key>
@@ -139,8 +158,8 @@
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/scripts/csv_handler.py</url>
-          <line>15</line>
-          <option name="timeStamp" value="5" />
+          <line>16</line>
+          <option name="timeStamp" value="8" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
