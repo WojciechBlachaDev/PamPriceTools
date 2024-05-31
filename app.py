@@ -62,7 +62,6 @@ class App:
             self.root.iconbitmap(os.path.join(os.getcwd(), 'app_icon.ico'))
             myappid = "BRK_Windows.PamPriceTools.PamPriceTools.version_0_0_1"
             ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
-
         except Exception as e:
             raise Exception(f'Błąd tworzenia okna głównego aplikacji: {e}')
 
@@ -323,7 +322,7 @@ class App:
         positions_not_found = []
         self.start_button.config(state='disabled')
         search_values, _ = excel_handler.get_column_data(self.excel_data, int(self.excel_search_column.get()))
-        for i in range(int(self.csv_starting_row.get()), len(self.csv_data)):
+        for i in range(int(self.csv_starting_row.get()) - 1, len(self.csv_data)):
             self.csv_progress_counter.set(f"{i} / {len(self.csv_data)}")
             self.progress_bar_csv['value'] = (i / len(self.csv_data)) * 100
             self.price_update_frame.update()
@@ -365,11 +364,10 @@ class App:
                         try:
                             csv_column = int(self.csv_catalogue_price_column.get()) - 1
                             excel_column = int(self.excel_catalogue_price_column.get()) - 1
-                            if not pd.isna(excel_row[0].iloc[excel_column]):
+                            if not pd.isna(excel_row[0].iloc[excel_column]) and excel_row[0].iloc[excel_column] != 0.0:
                                 self.csv_data[i][csv_column] = str(excel_row[0].iloc[excel_column]).replace('.', ',')
                             else:
-                                self.csv_data[i][csv_column] = str(self.excel_data[0].iloc[int(
-                                    self.excel_base_price_column.get())]).replace('.', ',')
+                                self.csv_data[i][csv_column] = self.csv_data[i][int(self.csv_base_price_column.get()) - 1]
                         except Exception as e:
                             print(f'Discount group: {e}')
                             pass

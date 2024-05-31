@@ -1,5 +1,4 @@
 import csv
-import os
 
 
 def read_csv(path):

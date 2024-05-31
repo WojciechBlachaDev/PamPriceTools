@@ -4,29 +4,16 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="74ebed60-b0e2-4468-941e-bb2d66c7508d" name="Changes" comment="BBB">
-      <change afterPath="$PROJECT_DIR$/PamPriceTools.spec" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app_icon.ico" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/build/PamPriceTools/Analysis-00.toc" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/build/PamPriceTools/EXE-00.toc" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/build/PamPriceTools/PKG-00.toc" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/build/PamPriceTools/PYZ-00.pyz" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/build/PamPriceTools/PYZ-00.toc" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/build/PamPriceTools/PamPriceTools.pkg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/build/PamPriceTools/Tree-00.toc" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/build/PamPriceTools/Tree-01.toc" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/build/PamPriceTools/Tree-02.toc" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/build/PamPriceTools/base_library.zip" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/build/PamPriceTools/warn-PamPriceTools.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/build/PamPriceTools/xref-PamPriceTools.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/dist/PamPriceTools.exe" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/dist/app_icon.ico" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/PamPriceTools.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/PamPriceTools.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+    <list default="true" id="74ebed60-b0e2-4468-941e-bb2d66c7508d" name="Changes" comment="Beta release&#10;- sample files&#10;- created exe in dist folder">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_console.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/requrements.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/PamPriceTools/Analysis-00.toc" beforeDir="false" afterPath="$PROJECT_DIR$/build/PamPriceTools/Analysis-00.toc" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/PamPriceTools/EXE-00.toc" beforeDir="false" afterPath="$PROJECT_DIR$/build/PamPriceTools/EXE-00.toc" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/PamPriceTools/PKG-00.toc" beforeDir="false" afterPath="$PROJECT_DIR$/build/PamPriceTools/PKG-00.toc" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/PamPriceTools/PYZ-00.pyz" beforeDir="false" afterPath="$PROJECT_DIR$/build/PamPriceTools/PYZ-00.pyz" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/PamPriceTools/PamPriceTools.pkg" beforeDir="false" afterPath="$PROJECT_DIR$/build/PamPriceTools/PamPriceTools.pkg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/PamPriceTools/xref-PamPriceTools.html" beforeDir="false" afterPath="$PROJECT_DIR$/build/PamPriceTools/xref-PamPriceTools.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/PamPriceTools.exe" beforeDir="false" afterPath="$PROJECT_DIR$/dist/PamPriceTools.exe" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/scripts/csv_handler.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/csv_handler.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -143,7 +130,23 @@
       <option name="project" value="LOCAL" />
       <updated>1716987389563</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="Beta release&#10;- sample files&#10;- created exe in dist folder">
+      <option name="closed" value="true" />
+      <created>1717136532992</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1717136532992</updated>
+    </task>
+    <task id="LOCAL-00007" summary="Beta release&#10;- sample files&#10;- created exe in dist folder">
+      <option name="closed" value="true" />
+      <created>1717136540684</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1717136540684</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -151,14 +154,15 @@
     <MESSAGE value="Added json handler, updated xlsx and csv handlers," />
     <MESSAGE value="AAAA" />
     <MESSAGE value="BBB" />
-    <option name="LAST_COMMIT_MESSAGE" value="BBB" />
+    <MESSAGE value="Beta release&#10;- sample files&#10;- created exe in dist folder" />
+    <option name="LAST_COMMIT_MESSAGE" value="Beta release&#10;- sample files&#10;- created exe in dist folder" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/scripts/csv_handler.py</url>
-          <line>16</line>
+          <line>15</line>
           <option name="timeStamp" value="8" />
         </line-breakpoint>
       </breakpoints>
