@@ -1,16 +1,28 @@
-import os
 import ctypes
+import os
+import tkinter as tk
+from tkinter import filedialog
+from tkinter import ttk
+import pandas as pd
 from scripts import csv_handler
 from scripts import excel_handler
 from scripts import json_handler
-import pandas as pd
-import tkinter as tk
-from tkinter import ttk
-from tkinter import filedialog
 
 
 class App:
     def __init__(self, main_root):
+        self.dialog = None
+        self.save_button = None
+        self.empty_start_button = None
+        self.multiple_input_listbox = None
+        self.csv_descriptions = []
+        self.multiple_inputs_selected = None
+        self.delete_bool = False
+        self.pass_bool = False
+        self.verify_start_button = None
+        self.verify_start = None
+        self.verify_progressbar = None
+        self.verify_frame = None
         self.start_button = None
         self.delete_option_check_box = None
         self.progress_bar_excel_value = None
@@ -21,6 +33,8 @@ class App:
         self.data_exchange_frame = None
         self.csv_data = None
         self.headers = None
+        self.csv_data_verify = None
+        self.headers_verify = None
         self.excel_data = None
         self.files_frame = None
         self.notebook = None
@@ -34,8 +48,10 @@ class App:
             json_handler.save_settings(self.settings, os.path.join(os.getcwd(), 'exchange_settings.json'))
         self.csv_raw_path = tk.StringVar()
         self.excel_raw_path = tk.StringVar()
+        self.csv_verify_path = tk.StringVar()
         self.excel_columns_count = 0
         self.csv_columns_count = 0
+        self.csv_columns_count_verify = 0
         self.excel_search_column = None
         self.csv_search_column = None
         self.excel_discount_value_column = None
@@ -54,6 +70,8 @@ class App:
         self.csv_progress_counter = tk.StringVar()
         self.excel_progress_counter = tk.StringVar()
         self.set_price_update_page()
+        self.set_verify_page()
+        self.items_to_delete = []
 
     def set_main_window(self, main_root):
         try:
@@ -136,7 +154,7 @@ class App:
         self.csv_catalogue_price_column = ttk.Combobox(self.data_exchange_frame, values=csv_columns)
         self.csv_catalogue_price_column.grid(row=9, column=0, padx=5, pady=5)
 
-        self.set_descriptions('Wprowadź wiersz startowy danych w plikach', 10)
+        self.set_descriptions_rows('Wprowadź wiersz startowy danych w plikach', 10)
         excel_starting_row = ttk.Entry(self.data_exchange_frame, textvariable=self.excel_starting_row)
         excel_starting_row.grid(row=11, column=2, padx=5, pady=5)
         csv_starting_row = ttk.Entry(self.data_exchange_frame, textvariable=self.csv_starting_row)
@@ -152,6 +170,37 @@ class App:
         load_button.grid(row=2, column=4, padx=5, pady=5)
         delete_button = ttk.Button(self.data_exchange_frame, text='Usuń', command=self.delete_data_exchange_settings)
         delete_button.grid(row=2, column=5, padx=5, pady=5)
+
+    def set_verify_page(self):
+        self.verify_frame = ttk.Frame(self.notebook)
+        self.verify_frame.grid(row=0, column=0, sticky='nsew')
+        self.notebook.add(self.verify_frame, text='Weryfikuj plik CSV')
+
+        csv_label = ttk.Label(self.verify_frame, text='Wybierz plik CSV')
+        csv_label.grid(row=0, column=0, sticky='w')
+        csv_entry = ttk.Entry(self.verify_frame, textvariable=self.csv_verify_path, width=100)
+        csv_entry.grid(row=0, column=1, padx=5, pady=5)
+        csv_button = ttk.Button(self.verify_frame, text='Przeglądaj pliki', command=self.get_csv_verify_path)
+        csv_button.grid(row=0, column=2, padx=5, pady=5)
+
+        self.verify_start_button = ttk.Button(self.verify_frame, text='Szukaj zwielokrotnień',
+                                              command=self.csv_data_verify_method)
+        self.verify_start_button.grid(row=3, column=1, padx=50, pady=5, sticky='w')
+        self.verify_start_button.config(state='disabled')
+
+        self.empty_start_button = ttk.Button(self.verify_frame, text='Szukaj pustych wpisów',
+                                             command=self.csv_data_empty_verify_method)
+        self.empty_start_button.grid(row=3, column=1, padx=50, pady=5, sticky='e')
+        self.empty_start_button.config(state='disabled')
+
+        multiple_inputs_label = ttk.Label(self.verify_frame, text='Wybierz kolumnę dokumentu')
+        multiple_inputs_label.grid(row=1, column=1, padx=5, pady=5)
+        self.multiple_input_listbox = tk.Listbox(self.verify_frame, selectmode='single')
+        self.multiple_input_listbox.grid(row=2, column=1)
+
+        self.save_button = ttk.Button(self.verify_frame, text='Zapisz dane', command=self.save_verified_file)
+        self.save_button.grid(row=4, column=1, padx=5, pady=5)
+        self.save_button.config(state='disabled')
 
     def set_price_update_page(self):
         self.csv_progress_counter.set('0')
@@ -272,7 +321,7 @@ class App:
         self.csv_catalogue_price_column = ttk.Combobox(self.data_exchange_frame, values=csv_columns)
         self.csv_catalogue_price_column.grid(row=9, column=0, padx=5, pady=5)
 
-        self.set_descriptions('Wprowadź wiersz startowy danych w plikach', 10)
+        self.set_descriptions_rows('Wprowadź wiersz startowy danych w plikach', 10)
         excel_starting_row = ttk.Entry(self.data_exchange_frame, textvariable=self.excel_starting_row)
         excel_starting_row.grid(row=11, column=2, padx=5, pady=5)
         csv_starting_row = ttk.Entry(self.data_exchange_frame, textvariable=self.csv_starting_row)
@@ -297,27 +346,61 @@ class App:
         csv_desc = ttk.Label(self.data_exchange_frame, text='Kolumna Excel')
         csv_desc.grid(row=row, column=2, padx=5, pady=5)
 
+    def set_descriptions_rows(self, text, row):
+        label_search_columns = ttk.Label(self.data_exchange_frame, text=text)
+        label_search_columns.grid(row=row, column=1, padx=5, pady=5)
+        excel_desc = ttk.Label(self.data_exchange_frame, text='Wiersz CSV')
+        excel_desc.grid(row=row, column=0, padx=5, pady=5)
+        csv_desc = ttk.Label(self.data_exchange_frame, text='Wiersz Excel')
+        csv_desc.grid(row=row, column=2, padx=5, pady=5)
+
     def get_csv_path(self):
         path = filedialog.askopenfilename(filetypes=[("CSV Files", "*.csv")])
-        if path is not None:
+        if path is not None and path != '' and path != '.csv':
             self.csv_raw_path.set(path)
             _, self.headers, self.csv_data = csv_handler.read_csv(self.csv_raw_path.get())
             self.csv_columns_count = len(self.csv_data[0])
-            self.update_data_exchange_frame()
+
+    def get_csv_verify_path(self):
+        path = filedialog.askopenfilename(filetypes=[("CSV Files", "*.csv")])
+        if path is not None and path != '' and path != '.csv':
+            self.csv_verify_path.set(path)
+            _, self.headers_verify, self.csv_data_verify = csv_handler.read_csv(self.csv_verify_path.get())
+            self.csv_columns_count_verify = len(self.csv_data_verify[0])
+            for item in self.csv_data_verify[0]:
+                self.multiple_input_listbox.insert(tk.END, item)
+            self.verify_start_button.config(state='enabled')
+            self.empty_start_button.config(state='enabled')
+            self.save_button.config(state='enabled')
+            self.verify_frame.update()
 
     def get_excel_path(self):
         path = filedialog.askopenfilename(filetypes=[("Excel Files", "*.xlsx")])
-        self.root.config(cursor='wait')
-        self.root.update()
-        if path is not None:
+        if path is not None and path != '' and path != '.xlsx':
             self.excel_raw_path.set(path)
             self.excel_data, _ = excel_handler.xlsx_read(self.excel_raw_path.get())
             self.excel_columns_count, _ = excel_handler.get_columns_count(self.excel_data)
             self.update_data_exchange_frame()
-        self.root.config(cursor='')
-        self.root.update()
 
     def update_prices(self):
+        if (self.csv_search_column.get() is None or self.excel_search_column.get() is None or
+                self.csv_starting_row.get() is None or self.excel_starting_row.get() is None):
+            return
+        try:
+            if int(self.csv_search_column.get()) <= 0 or int(self.excel_search_column.get()) <= 0 or int(
+                    self.csv_starting_row.get()) <= 0 or int(self.excel_starting_row.get()) <= 0:
+                return
+        except Exception:
+            return
+        if self.excel_raw_path.get() is None or self.csv_raw_path.get() is None:
+            return
+        if (self.excel_raw_path.get() == '' or self.excel_raw_path.get() == '.xlsx'
+                or self.csv_raw_path.get() == '' or self.csv_raw_path.get() == '.csv'):
+            return
+        _, self.headers, self.csv_data = csv_handler.read_csv(self.csv_raw_path.get())
+        self.csv_columns_count = len(self.csv_data[0])
+        self.excel_data, _ = excel_handler.xlsx_read(self.excel_raw_path.get())
+        self.excel_columns_count, _ = excel_handler.get_columns_count(self.excel_data)
         position_found = False
         positions_not_found = []
         self.start_button.config(state='disabled')
@@ -367,7 +450,8 @@ class App:
                             if not pd.isna(excel_row[0].iloc[excel_column]) and excel_row[0].iloc[excel_column] != 0.0:
                                 self.csv_data[i][csv_column] = str(excel_row[0].iloc[excel_column]).replace('.', ',')
                             else:
-                                self.csv_data[i][csv_column] = self.csv_data[i][int(self.csv_base_price_column.get()) - 1]
+                                self.csv_data[i][csv_column] = self.csv_data[i][
+                                    int(self.csv_base_price_column.get()) - 1]
                         except Exception as e:
                             print(f'Discount group: {e}')
                             pass
@@ -376,20 +460,98 @@ class App:
                 positions_not_found.append(search)
             if position_found:
                 position_found = False
-        if self.delete_option_check_box and len(positions_not_found) > 0:
+        if self.price_update_delete_option.get() and len(positions_not_found) > 0:
             for i in range(len(positions_not_found)):
                 updated_data, _ = csv_handler.remove_entry(self.csv_data, int(self.csv_search_column.get()) - 1,
                                                            positions_not_found[i])
                 if updated_data is not None:
                     self.csv_data = updated_data
         new_path = filedialog.asksaveasfilename(defaultextension=".csv", filetypes=[("CSV Files", "*.csv")])
-        print(new_path)
         if new_path is not None and new_path != '' and new_path != '.csv':
             csv_handler.save_csv(new_path, self.headers, self.csv_data)
         self.csv_progress_counter.set(f'Wielkość po operacji: {len(self.csv_data) + 1}')
         self.progress_bar_csv['value'] = 100
         self.start_button.config(state='enabled')
         self.price_update_frame.update()
+
+    def csv_data_verify_method(self):
+        multiple_length = self.multiple_input_listbox.curselection()
+        self.multiple_inputs_selected = [self.multiple_input_listbox.get(i) for i in multiple_length]
+        print(len(self.csv_data_verify))
+        for selected_item in self.multiple_inputs_selected:
+            duplicates, _ = csv_handler.multiple_data_check(self.csv_data_verify,
+                                                            self.csv_data_verify[0].index(selected_item))
+            data_list = []
+            for duplicate in duplicates:
+                for i in range(len(self.csv_data_verify)):
+                    if self.csv_data_verify[i][self.csv_data_verify[0].index(selected_item)] == duplicate:
+                        data_list.append(self.csv_data_verify[i])
+            self.show_data_dialog(data_list)
+            self.root.wait_window(self.dialog)
+
+    def save_verified_file(self):
+        new_path = filedialog.asksaveasfilename(defaultextension=".csv", filetypes=[("CSV Files", "*.csv")])
+        if new_path is not None and new_path != '' and new_path != '.csv':
+            csv_handler.save_csv(new_path, self.headers_verify, self.csv_data_verify)
+
+    def csv_data_empty_verify_method(self):
+        multiple_length = self.multiple_input_listbox.curselection()
+        self.multiple_inputs_selected = [self.multiple_input_listbox.get(i) for i in multiple_length]
+        print(len(self.csv_data_verify))
+        data_list = []
+        for selected_item in self.multiple_inputs_selected:
+            for i in range(len(self.csv_data_verify)):
+                if self.csv_data_verify[i][self.csv_data_verify[0].index(selected_item)] == '' or \
+                        self.csv_data_verify[i][self.csv_data_verify[0].index(selected_item)] is None:
+                    data_list.append(self.csv_data_verify[i])
+            self.show_data_dialog(data_list)
+            self.root.wait_window(self.dialog)
+
+    def show_data_dialog(self, data_list):
+        self.dialog = tk.Toplevel(self.root)
+        self.dialog.title("Zduplikowane dane")
+        self.dialog.geometry('800x600')
+
+        self.dialog.grid_columnconfigure(0, weight=1)
+        self.dialog.grid_rowconfigure(1, weight=1)
+
+        label = ttk.Label(self.dialog, text="Zduplikowane dane:")
+        label.grid(row=0, column=0, padx=10, pady=10, sticky='w')
+
+        frame = ttk.Frame(self.dialog)
+        frame.grid(row=1, column=0, padx=10, pady=10, sticky='nsew')
+        frame.grid_columnconfigure(0, weight=1)
+        frame.grid_rowconfigure(0, weight=1)
+        data_listbox = tk.Listbox(frame, selectmode=tk.MULTIPLE)
+        data_listbox.grid(row=0, column=0, sticky='nsew')
+        scrollbar = ttk.Scrollbar(frame, orient="vertical", command=data_listbox.yview)
+        scrollbar.grid(row=0, column=1, sticky='ns')
+        data_listbox.config(yscrollcommand=scrollbar.set)
+        for item in data_list:
+            data_listbox.insert(tk.END, item)
+        button_frame = ttk.Frame(self.dialog)
+        button_frame.grid(row=2, column=0, padx=10, pady=10, sticky='ew')
+        button_frame.grid_columnconfigure(0, weight=1)
+        button_frame.grid_columnconfigure(1, weight=1)
+
+        delete_button = ttk.Button(button_frame, text="Usuń",
+                                   command=lambda: self.delete_selected(data_listbox, self.dialog))
+        delete_button.grid(row=0, column=0, padx=10, pady=10, sticky='ew')
+
+        skip_button = ttk.Button(button_frame, text="Pomiń", command=self.dialog.destroy)
+        skip_button.grid(row=0, column=1, padx=10, pady=10, sticky='ew')
+        if len(data_list) < 1:
+            delete_button.config(state='disabled')
+
+    def delete_selected(self, listbox, dialog):
+        selected_indices = listbox.curselection()
+        selected_items = [listbox.get(i) for i in selected_indices]
+        for item in selected_items:
+            for row in self.csv_data_verify:
+                if row[0] == item[0]:
+                    self.csv_data_verify.remove(row)
+                    print(len(self.csv_data_verify))
+        dialog.destroy()
 
 
 if __name__ == '__main__':
