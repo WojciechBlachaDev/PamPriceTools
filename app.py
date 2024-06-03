@@ -515,7 +515,7 @@ class App:
 
     def show_data_dialog(self, data_list, skip_all=False):
         self.dialog = tk.Toplevel(self.root)
-        self.dialog.title("Zduplikowane dane")
+        self.dialog.title("Wykryte dane")
         self.dialog.geometry('800x600')
 
         self.dialog.grid_columnconfigure(0, weight=1)
