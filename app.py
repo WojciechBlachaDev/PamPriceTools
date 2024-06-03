@@ -18,7 +18,7 @@ class App:
         self.csv_descriptions = []
         self.multiple_inputs_selected = None
         self.delete_bool = False
-        self.pass_bool = False
+        self.skip_all = False
         self.verify_start_button = None
         self.verify_start = None
         self.verify_progressbar = None
@@ -481,14 +481,19 @@ class App:
         for selected_item in self.multiple_inputs_selected:
             duplicates, _ = csv_handler.multiple_data_check(self.csv_data_verify,
                                                             self.csv_data_verify[0].index(selected_item))
-
             for duplicate in duplicates:
                 data_list = []
                 for i in range(len(self.csv_data_verify)):
                     if self.csv_data_verify[i][self.csv_data_verify[0].index(selected_item)] == duplicate:
                         data_list.append(self.csv_data_verify[i])
-                self.show_data_dialog(data_list)
+                self.show_data_dialog(data_list, skip_all=True)
                 self.root.wait_window(self.dialog)
+                if self.skip_all:
+                    self.skip_all = False
+                    break
+            if self.skip_all:
+                self.skip_all = False
+                break
 
     def save_verified_file(self):
         new_path = filedialog.asksaveasfilename(defaultextension=".csv", filetypes=[("CSV Files", "*.csv")])
@@ -508,7 +513,7 @@ class App:
             self.show_data_dialog(data_list)
             self.root.wait_window(self.dialog)
 
-    def show_data_dialog(self, data_list):
+    def show_data_dialog(self, data_list, skip_all=False):
         self.dialog = tk.Toplevel(self.root)
         self.dialog.title("Zduplikowane dane")
         self.dialog.geometry('800x600')
@@ -541,6 +546,11 @@ class App:
 
         skip_button = ttk.Button(button_frame, text="Pomiń", command=self.dialog.destroy)
         skip_button.grid(row=0, column=1, padx=10, pady=10, sticky='ew')
+
+        if skip_all:
+            skip_all_button = ttk.Button(button_frame, text="Pomiń wszystkie", command=self.skip_all_func)
+            skip_all_button.grid(row=0, column=2, padx=10, pady=10, sticky='ew')
+
         if len(data_list) < 1:
             delete_button.config(state='disabled')
         self.center_dialog(self.dialog)
@@ -565,6 +575,10 @@ class App:
         x = (screen_width // 2) - (width // 2)
         y = (screen_height // 2) - (height // 2)
         dialog.geometry(f'{width}x{height}+{x}+{y}')
+
+    def skip_all_func(self):
+        self.skip_all = True
+        self.dialog.destroy()
 
 
 if __name__ == '__main__':

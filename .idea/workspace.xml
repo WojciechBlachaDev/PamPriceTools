@@ -4,9 +4,15 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="74ebed60-b0e2-4468-941e-bb2d66c7508d" name="Changes" comment="Beta release&#10;- small fixes&#10;- added new verify tab">
+    <list default="true" id="74ebed60-b0e2-4468-941e-bb2d66c7508d" name="Changes" comment="Beta release&#10;- small fixes">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/PamPriceTools/Analysis-00.toc" beforeDir="false" afterPath="$PROJECT_DIR$/build/PamPriceTools/Analysis-00.toc" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/PamPriceTools/EXE-00.toc" beforeDir="false" afterPath="$PROJECT_DIR$/build/PamPriceTools/EXE-00.toc" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/PamPriceTools/PKG-00.toc" beforeDir="false" afterPath="$PROJECT_DIR$/build/PamPriceTools/PKG-00.toc" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/PamPriceTools/PamPriceTools.pkg" beforeDir="false" afterPath="$PROJECT_DIR$/build/PamPriceTools/PamPriceTools.pkg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/PamPriceTools/warn-PamPriceTools.txt" beforeDir="false" afterPath="$PROJECT_DIR$/build/PamPriceTools/warn-PamPriceTools.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/PamPriceTools.exe" beforeDir="false" afterPath="$PROJECT_DIR$/dist/PamPriceTools.exe" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -155,7 +161,15 @@
       <option name="project" value="LOCAL" />
       <updated>1717399868085</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="Beta release&#10;- small fixes">
+      <option name="closed" value="true" />
+      <created>1717400558355</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1717400558355</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -164,9 +178,9 @@
     <MESSAGE value="AAAA" />
     <MESSAGE value="BBB" />
     <MESSAGE value="Beta release&#10;- sample files&#10;- created exe in dist folder" />
-    <MESSAGE value="Beta release&#10;- small fixes" />
     <MESSAGE value="Beta release&#10;- small fixes&#10;- added new verify tab" />
-    <option name="LAST_COMMIT_MESSAGE" value="Beta release&#10;- small fixes&#10;- added new verify tab" />
+    <MESSAGE value="Beta release&#10;- small fixes" />
+    <option name="LAST_COMMIT_MESSAGE" value="Beta release&#10;- small fixes" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -183,12 +197,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/app.py</url>
-          <line>385</line>
-          <option name="timeStamp" value="11" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/app.py</url>
-          <line>550</line>
+          <line>560</line>
           <option name="timeStamp" value="17" />
         </line-breakpoint>
       </breakpoints>
