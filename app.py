@@ -517,7 +517,7 @@ class App:
         self.dialog = tk.Toplevel(self.root)
         self.dialog.title("Wykryte dane")
         self.dialog.geometry('800x600')
-
+        self.dialog.iconbitmap(os.path.join(os.getcwd(), 'app_icon.ico'))
         self.dialog.grid_columnconfigure(0, weight=1)
         self.dialog.grid_rowconfigure(1, weight=1)
 
