@@ -122,7 +122,7 @@ class App:
             csv_columns.append(str(i + 1))
         self.data_exchange_frame = ttk.Frame(self.notebook)
         self.data_exchange_frame.grid(row=0, column=0, sticky='nsew')
-        self.notebook.add(self.data_exchange_frame, text='Ustaw schemat wymiany danych')
+        self.notebook.add(self.data_exchange_frame, text='Ustaw schemat wymiany danych bazy okuć')
 
         self.set_descriptions('Wybierz kolumnę do indeksowania wyszukiwania', 0)
         self.excel_search_column = ttk.Combobox(self.data_exchange_frame, values=excel_columns)
@@ -207,7 +207,7 @@ class App:
         self.excel_progress_counter.set('0')
         self.price_update_frame = ttk.Frame(self.notebook)
         self.price_update_frame.grid(row=0, column=0, sticky='nsew')
-        self.notebook.add(self.price_update_frame, text='Aktualizacja cen')
+        self.notebook.add(self.price_update_frame, text='Aktualizacja cen okuć')
         self.progress_bar_csv = ttk.Progressbar(self.price_update_frame, orient='horizontal', length=300,
                                                 mode="determinate")
         self.progress_bar_csv.grid(row=1, column=1, padx=5, pady=5)
