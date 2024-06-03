@@ -481,13 +481,14 @@ class App:
         for selected_item in self.multiple_inputs_selected:
             duplicates, _ = csv_handler.multiple_data_check(self.csv_data_verify,
                                                             self.csv_data_verify[0].index(selected_item))
-            data_list = []
+
             for duplicate in duplicates:
+                data_list = []
                 for i in range(len(self.csv_data_verify)):
                     if self.csv_data_verify[i][self.csv_data_verify[0].index(selected_item)] == duplicate:
                         data_list.append(self.csv_data_verify[i])
-            self.show_data_dialog(data_list)
-            self.root.wait_window(self.dialog)
+                self.show_data_dialog(data_list)
+                self.root.wait_window(self.dialog)
 
     def save_verified_file(self):
         new_path = filedialog.asksaveasfilename(defaultextension=".csv", filetypes=[("CSV Files", "*.csv")])
@@ -542,6 +543,7 @@ class App:
         skip_button.grid(row=0, column=1, padx=10, pady=10, sticky='ew')
         if len(data_list) < 1:
             delete_button.config(state='disabled')
+        self.center_dialog(self.dialog)
 
     def delete_selected(self, listbox, dialog):
         selected_indices = listbox.curselection()
@@ -552,6 +554,17 @@ class App:
                     self.csv_data_verify.remove(row)
                     print(len(self.csv_data_verify))
         dialog.destroy()
+
+    @staticmethod
+    def center_dialog(dialog):
+        dialog.update_idletasks()
+        width = dialog.winfo_width()
+        height = dialog.winfo_height()
+        screen_width = dialog.winfo_screenwidth()
+        screen_height = dialog.winfo_screenheight()
+        x = (screen_width // 2) - (width // 2)
+        y = (screen_height // 2) - (height // 2)
+        dialog.geometry(f'{width}x{height}+{x}+{y}')
 
 
 if __name__ == '__main__':
