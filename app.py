@@ -517,11 +517,14 @@ class App:
                 for i in range(len(self.csv_data_verify)):
                     if self.csv_data_verify[i][self.csv_data_verify[0].index(selected_item)] == duplicate:
                         data_list.append(self.csv_data_verify[i])
-                self.show_data_dialog(data_list, skip_all=True)
-                self.root.wait_window(self.dialog)
-                if self.skip_all:
-                    self.skip_all = False
-                    break
+                if len(data_list) > 0:
+                    self.show_data_dialog(data_list, skip_all=True)
+                    self.root.wait_window(self.dialog)
+                    if self.skip_all:
+                        self.skip_all = False
+                        break
+            else:
+                messagebox.showinfo('Pam Price Tools', 'Nie znaleziono zwielokrotnionych wpisów')
             if self.skip_all:
                 self.skip_all = False
                 break
@@ -541,8 +544,11 @@ class App:
                 if self.csv_data_verify[i][self.csv_data_verify[0].index(selected_item)] == '' or \
                         self.csv_data_verify[i][self.csv_data_verify[0].index(selected_item)] is None:
                     data_list.append(self.csv_data_verify[i])
-            self.show_data_dialog(data_list)
-            self.root.wait_window(self.dialog)
+            if len(data_list) > 0:
+                self.show_data_dialog(data_list)
+                self.root.wait_window(self.dialog)
+            else:
+                messagebox.showinfo('Pam Price Tools', 'Nie znaleziono pustych wpisów')
 
     def show_data_dialog(self, data_list, skip_all=False):
         self.dialog = tk.Toplevel(self.root)
