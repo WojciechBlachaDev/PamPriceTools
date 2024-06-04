@@ -224,7 +224,7 @@ class App:
         delete_option_label = ttk.Label(self.price_update_frame, text='Usuń nieznalezione w cenniku wpisy')
         delete_option_label.grid(row=3, column=0, padx=5, pady=5)
         self.save_not_found_check_box = ttk.Checkbutton(self.price_update_frame,
-                                                       variable=self.save_not_found_index)
+                                                        variable=self.save_not_found_index)
         self.save_not_found_check_box.grid(row=4, column=1, padx=5, pady=5)
         not_found_label = ttk.Label(self.price_update_frame, text='Zapisz nieznalezione indexy')
         not_found_label.grid(row=4, column=0, padx=5, pady=5)
@@ -234,7 +234,7 @@ class App:
                                        text='Aktualizuj bazę', command=self.update_prices)
         self.start_button.grid(row=5, column=1, padx=10, pady=10)
         self.start_button_verify = ttk.Button(self.price_update_frame,
-                                       text='Porównaj ceny z plików', command=self.verify_prices)
+                                              text='Porównaj ceny z plików', command=self.verify_prices)
         self.start_button_verify.grid(row=6, column=1, padx=10, pady=10)
 
     def save_data_exchange_profile(self):
@@ -498,7 +498,6 @@ class App:
         messagebox.showinfo('PPT - File save', 'Podaj lokalizację zapisu pliku CSV')
         new_path = filedialog.asksaveasfilename(defaultextension=".csv", filetypes=[("CSV Files", "*.csv")])
         if new_path is not None and new_path != '' and new_path != '.csv':
-
             csv_handler.save_csv(new_path, self.headers, self.csv_data)
         self.csv_progress_counter.set(f'Wielkość po operacji: {len(self.csv_data) + 1}')
         self.progress_bar_csv['value'] = 100

@@ -4,18 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="74ebed60-b0e2-4468-941e-bb2d66c7508d" name="Changes" comment="Beta release&#10;- small fixes">
-      <change afterPath="$PROJECT_DIR$/scripts/txt_handler.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    <list default="true" id="74ebed60-b0e2-4468-941e-bb2d66c7508d" name="Changes" comment="Beta release&#10;- added verification&#10;- added messages &#10;- small fixes">
       <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/PamPriceTools/Analysis-00.toc" beforeDir="false" afterPath="$PROJECT_DIR$/build/PamPriceTools/Analysis-00.toc" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/PamPriceTools/EXE-00.toc" beforeDir="false" afterPath="$PROJECT_DIR$/build/PamPriceTools/EXE-00.toc" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/PamPriceTools/PKG-00.toc" beforeDir="false" afterPath="$PROJECT_DIR$/build/PamPriceTools/PKG-00.toc" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/PamPriceTools/PYZ-00.pyz" beforeDir="false" afterPath="$PROJECT_DIR$/build/PamPriceTools/PYZ-00.pyz" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/PamPriceTools/PYZ-00.toc" beforeDir="false" afterPath="$PROJECT_DIR$/build/PamPriceTools/PYZ-00.toc" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/PamPriceTools/PamPriceTools.pkg" beforeDir="false" afterPath="$PROJECT_DIR$/build/PamPriceTools/PamPriceTools.pkg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/PamPriceTools/xref-PamPriceTools.html" beforeDir="false" afterPath="$PROJECT_DIR$/build/PamPriceTools/xref-PamPriceTools.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dist/PamPriceTools.exe" beforeDir="false" afterPath="$PROJECT_DIR$/dist/PamPriceTools.exe" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -236,7 +226,15 @@
       <option name="project" value="LOCAL" />
       <updated>1717406519422</updated>
     </task>
-    <option name="localTasksCounter" value="19" />
+    <task id="LOCAL-00019" summary="Beta release&#10;- added verification&#10;- added messages &#10;- small fixes">
+      <option name="closed" value="true" />
+      <created>1717484756912</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1717484756912</updated>
+    </task>
+    <option name="localTasksCounter" value="20" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -247,14 +245,15 @@
     <MESSAGE value="Beta release&#10;- sample files&#10;- created exe in dist folder" />
     <MESSAGE value="Beta release&#10;- small fixes&#10;- added new verify tab" />
     <MESSAGE value="Beta release&#10;- small fixes" />
-    <option name="LAST_COMMIT_MESSAGE" value="Beta release&#10;- small fixes" />
+    <MESSAGE value="Beta release&#10;- added verification&#10;- added messages &#10;- small fixes" />
+    <option name="LAST_COMMIT_MESSAGE" value="Beta release&#10;- added verification&#10;- added messages &#10;- small fixes" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/app.py</url>
-          <line>622</line>
+          <line>621</line>
           <option name="timeStamp" value="17" />
         </line-breakpoint>
       </breakpoints>
