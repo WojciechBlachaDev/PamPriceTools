@@ -2,15 +2,19 @@ import ctypes
 import os
 import tkinter as tk
 from tkinter import filedialog
+from tkinter import messagebox
 from tkinter import ttk
 import pandas as pd
 from scripts import csv_handler
 from scripts import excel_handler
 from scripts import json_handler
+from scripts import txt_handler
 
 
 class App:
     def __init__(self, main_root):
+        self.start_button_verify = None
+        self.save_not_found_check_box = None
         self.dialog = None
         self.save_button = None
         self.empty_start_button = None
@@ -40,6 +44,7 @@ class App:
         self.notebook = None
         self.excel_starting_row = tk.StringVar()
         self.csv_starting_row = tk.StringVar()
+        self.save_not_found_index = tk.BooleanVar()
         self.root = None
         self.price_update_delete_option = tk.BooleanVar()
         self.settings_name = ''
@@ -81,14 +86,14 @@ class App:
             myappid = "BRK_Windows.PamPriceTools.PamPriceTools.version_0_0_1"
             ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
         except Exception as e:
-            raise Exception(f'Błąd tworzenia okna głównego aplikacji: {e}')
+            messagebox.showerror('Pam Price Tools - ERROR:', f'Błąd podczas tworzenia okna głównego aplikacji: {e}')
 
     def set_notebook(self):
         try:
             self.notebook = ttk.Notebook(self.root)
             self.notebook.grid(row=0, column=0, sticky='nsew')
         except Exception as e:
-            raise Exception(f'Błąd tworzenia zeszytu dla okna głównego: {e}')
+            messagebox.showerror('Pam Price Tools - ERROR:', f'Błąd podczas tworzenia zakładek okna aplikacji: {e}')
 
     def set_file_page(self):
         try:
@@ -108,7 +113,7 @@ class App:
             excel_button = ttk.Button(self.files_frame, text='Przeglądaj pliki', command=self.get_excel_path)
             excel_button.grid(row=1, column=2, padx=5, pady=5)
         except Exception as e:
-            raise Exception(f'Błąd tworzenia strony obsługi plików: {e}')
+            messagebox.showerror('Pam Price Tools - ERROR:', f'Błąd podczas tworzenia strony obsługi plików: {e}')
 
     def set_data_exchange_page(self):
         excel_columns = []
@@ -218,11 +223,19 @@ class App:
         self.delete_option_check_box.grid(row=3, column=1, padx=5, pady=5)
         delete_option_label = ttk.Label(self.price_update_frame, text='Usuń nieznalezione w cenniku wpisy')
         delete_option_label.grid(row=3, column=0, padx=5, pady=5)
+        self.save_not_found_check_box = ttk.Checkbutton(self.price_update_frame,
+                                                       variable=self.save_not_found_index)
+        self.save_not_found_check_box.grid(row=4, column=1, padx=5, pady=5)
+        not_found_label = ttk.Label(self.price_update_frame, text='Zapisz nieznalezione indexy')
+        not_found_label.grid(row=4, column=0, padx=5, pady=5)
         progress_label_csv = ttk.Label(self.price_update_frame, text='Postęp pliku CSV')
         progress_label_csv.grid(row=1, column=0, padx=5, pady=5)
         self.start_button = ttk.Button(self.price_update_frame,
                                        text='Aktualizuj bazę', command=self.update_prices)
-        self.start_button.grid(row=4, column=1, padx=10, pady=10)
+        self.start_button.grid(row=5, column=1, padx=10, pady=10)
+        self.start_button_verify = ttk.Button(self.price_update_frame,
+                                       text='Porównaj ceny z plików', command=self.verify_prices)
+        self.start_button_verify.grid(row=6, column=1, padx=10, pady=10)
 
     def save_data_exchange_profile(self):
         new_settings = {
@@ -371,6 +384,7 @@ class App:
                 self.multiple_input_listbox.insert(tk.END, item)
             self.verify_start_button.config(state='enabled')
             self.empty_start_button.config(state='enabled')
+            self.start_button_verify.config(state='enabled')
             self.save_button.config(state='enabled')
             self.verify_frame.update()
 
@@ -385,17 +399,22 @@ class App:
     def update_prices(self):
         if (self.csv_search_column.get() is None or self.excel_search_column.get() is None or
                 self.csv_starting_row.get() is None or self.excel_starting_row.get() is None):
+            messagebox.showwarning('Pam Price Tools - OSTRZEŻENIE:', f'Ustaw wymianę danych pomiędzy plikami')
             return
         try:
             if int(self.csv_search_column.get()) <= 0 or int(self.excel_search_column.get()) <= 0 or int(
                     self.csv_starting_row.get()) <= 0 or int(self.excel_starting_row.get()) <= 0:
+                messagebox.showwarning('Pam Price Tools - OSTRZEŻENIE:', f'Ustaw wymianę danych pomiędzy plikami')
                 return
         except Exception:
+            messagebox.showwarning('Pam Price Tools - OSTRZEŻENIE:', f'Ustaw wymianę danych pomiędzy plikami')
             return
         if self.excel_raw_path.get() is None or self.csv_raw_path.get() is None:
+            messagebox.showwarning('Pam Price Tools - OSTRZEŻENIE:', f'Wybierz pliki CSV i Excell')
             return
         if (self.excel_raw_path.get() == '' or self.excel_raw_path.get() == '.xlsx'
                 or self.csv_raw_path.get() == '' or self.csv_raw_path.get() == '.csv'):
+            messagebox.showwarning('Pam Price Tools - OSTRZEŻENIE:', f'Wybierz pliki CSV i Excell')
             return
         _, self.headers, self.csv_data = csv_handler.read_csv(self.csv_raw_path.get())
         self.csv_columns_count = len(self.csv_data[0])
@@ -404,6 +423,7 @@ class App:
         position_found = False
         positions_not_found = []
         self.start_button.config(state='disabled')
+        self.start_button_verify.config(state='disabled')
         search_values, _ = excel_handler.get_column_data(self.excel_data, int(self.excel_search_column.get()))
         for i in range(int(self.csv_starting_row.get()) - 1, len(self.csv_data)):
             self.csv_progress_counter.set(f"{i} / {len(self.csv_data)}")
@@ -424,7 +444,8 @@ class App:
                             else:
                                 self.csv_data[i][csv_column] = '0.0'
                         except Exception as e:
-                            print(f'Discount group: {e}')
+                            messagebox.showwarning('Pam Price Tools - OSTRZEŻENIE:',
+                                                   f'Błąd wymiany danych (wartosć rabatu): {e}')
                             pass
                         try:
                             csv_column = int(self.csv_discount_group_column.get()) - 1
@@ -432,7 +453,8 @@ class App:
                             if not pd.isna(excel_row[0].iloc[excel_column]):
                                 self.csv_data[i][csv_column] = str(excel_row[0].iloc[excel_column])
                         except Exception as e:
-                            print(f'Discount group: {e}')
+                            messagebox.showwarning('Pam Price Tools - OSTRZEŻENIE:',
+                                                   f'Błąd wymiany danych (Grupa rabatu): {e}')
                             pass
                         try:
                             csv_column = int(self.csv_base_price_column.get()) - 1
@@ -442,7 +464,8 @@ class App:
                             else:
                                 self.csv_data[i][csv_column] = '0.0'
                         except Exception as e:
-                            print(f'Discount group: {e}')
+                            messagebox.showwarning('Pam Price Tools - OSTRZEŻENIE:',
+                                                   f'Błąd wymiany danych (Cena bazowa): {e}')
                             pass
                         try:
                             csv_column = int(self.csv_catalogue_price_column.get()) - 1
@@ -453,7 +476,8 @@ class App:
                                 self.csv_data[i][csv_column] = self.csv_data[i][
                                     int(self.csv_base_price_column.get()) - 1]
                         except Exception as e:
-                            print(f'Discount group: {e}')
+                            messagebox.showwarning('Pam Price Tools - OSTRZEŻENIE:',
+                                                   f'Błąd wymiany danych (Cena katalogowa): {e}')
                             pass
                     break
             if not position_found:
@@ -466,12 +490,20 @@ class App:
                                                            positions_not_found[i])
                 if updated_data is not None:
                     self.csv_data = updated_data
+        if self.save_not_found_index.get() and len(positions_not_found) > 0:
+            messagebox.showinfo('PPT - File save', 'Podaj lokalizację zapisu indexów nie znalezionych')
+            not_found_path = filedialog.asksaveasfilename(defaultextension='.txt', filetypes=[('Text', '*.txt')])
+            if not_found_path is not None and not_found_path != '' and not_found_path != '.txt':
+                txt_handler.save_txt(not_found_path, positions_not_found)
+        messagebox.showinfo('PPT - File save', 'Podaj lokalizację zapisu pliku CSV')
         new_path = filedialog.asksaveasfilename(defaultextension=".csv", filetypes=[("CSV Files", "*.csv")])
         if new_path is not None and new_path != '' and new_path != '.csv':
+
             csv_handler.save_csv(new_path, self.headers, self.csv_data)
         self.csv_progress_counter.set(f'Wielkość po operacji: {len(self.csv_data) + 1}')
         self.progress_bar_csv['value'] = 100
         self.start_button.config(state='enabled')
+        self.start_button_verify.config(state='enabled')
         self.price_update_frame.update()
 
     def csv_data_verify_method(self):
@@ -555,6 +587,36 @@ class App:
             delete_button.config(state='disabled')
         self.center_dialog(self.dialog)
 
+    def show_verification_dialog(self, data_list):
+        self.dialog = tk.Toplevel(self.root)
+        self.dialog.title("Wykryte dane")
+        self.dialog.geometry('800x600')
+        self.dialog.iconbitmap(os.path.join(os.getcwd(), 'app_icon.ico'))
+        self.dialog.grid_columnconfigure(0, weight=1)
+        self.dialog.grid_rowconfigure(1, weight=1)
+
+        label = ttk.Label(self.dialog, text="Błędne:")
+        label.grid(row=0, column=0, padx=10, pady=10, sticky='w')
+
+        frame = ttk.Frame(self.dialog)
+        frame.grid(row=1, column=0, padx=10, pady=10, sticky='nsew')
+        frame.grid_columnconfigure(0, weight=1)
+        frame.grid_rowconfigure(0, weight=1)
+        data_listbox = tk.Listbox(frame, selectmode=tk.MULTIPLE)
+        data_listbox.grid(row=0, column=0, sticky='nsew')
+        scrollbar = ttk.Scrollbar(frame, orient="vertical", command=data_listbox.yview)
+        scrollbar.grid(row=0, column=1, sticky='ns')
+        data_listbox.config(yscrollcommand=scrollbar.set)
+        for item in data_list:
+            data_listbox.insert(tk.END, item)
+        button_frame = ttk.Frame(self.dialog)
+        button_frame.grid(row=2, column=0, padx=10, pady=10, sticky='ew')
+        button_frame.grid_columnconfigure(0, weight=1)
+        button_frame.grid_columnconfigure(1, weight=1)
+        skip_button = ttk.Button(button_frame, text="OK", command=self.dialog.destroy)
+        skip_button.grid(row=0, column=1, padx=10, pady=10, sticky='nsew')
+        self.center_dialog(self.dialog)
+
     def delete_selected(self, listbox, dialog):
         selected_indices = listbox.curselection()
         selected_items = [listbox.get(i) for i in selected_indices]
@@ -564,6 +626,125 @@ class App:
                     self.csv_data_verify.remove(row)
                     print(len(self.csv_data_verify))
         dialog.destroy()
+
+    def verify_prices(self):
+        if (self.csv_search_column.get() is None or self.excel_search_column.get() is None or
+                self.csv_starting_row.get() is None or self.excel_starting_row.get() is None):
+            messagebox.showwarning('Pam Price Tools - OSTRZEŻENIE:', f'Ustaw wymianę danych pomiędzy plikami')
+            return
+        try:
+            if int(self.csv_search_column.get()) <= 0 or int(self.excel_search_column.get()) <= 0 or int(
+                    self.csv_starting_row.get()) <= 0 or int(self.excel_starting_row.get()) <= 0:
+                messagebox.showwarning('Pam Price Tools - OSTRZEŻENIE:', f'Ustaw wymianę danych pomiędzy plikami')
+                return
+        except Exception:
+            messagebox.showwarning('Pam Price Tools - OSTRZEŻENIE:', f'Ustaw wymianę danych pomiędzy plikami')
+            return
+        if self.excel_raw_path.get() is None or self.csv_raw_path.get() is None:
+            messagebox.showwarning('Pam Price Tools - OSTRZEŻENIE:', f'Wybierz pliki CSV i Excell')
+            return
+        if (self.excel_raw_path.get() == '' or self.excel_raw_path.get() == '.xlsx'
+                or self.csv_raw_path.get() == '' or self.csv_raw_path.get() == '.csv'):
+            messagebox.showwarning('Pam Price Tools - OSTRZEŻENIE:', f'Wybierz pliki CSV i Excell')
+            return
+        _, self.headers, self.csv_data = csv_handler.read_csv(self.csv_raw_path.get())
+        self.csv_columns_count = len(self.csv_data[0])
+        self.excel_data, _ = excel_handler.xlsx_read(self.excel_raw_path.get())
+        self.excel_columns_count, _ = excel_handler.get_columns_count(self.excel_data)
+        position_found = False
+        positions_not_found = []
+        differences = []
+        self.start_button.config(state='disabled')
+        self.start_button_verify.config(state='disabled')
+        search_values, _ = excel_handler.get_column_data(self.excel_data, int(self.excel_search_column.get()))
+        for i in range(int(self.csv_starting_row.get()) - 1, len(self.csv_data)):
+            self.csv_progress_counter.set(f"{i} / {len(self.csv_data)}")
+            self.progress_bar_csv['value'] = (i / len(self.csv_data)) * 100
+            self.price_update_frame.update()
+            search = self.csv_data[i][int(self.csv_search_column.get()) - 1]
+            for j in range(int(self.excel_starting_row.get()), len(self.excel_data)):
+                if search == search_values[j]:
+                    difference = False
+                    position_found = True
+                    excel_row = excel_handler.get_row_data(self.excel_data, j + 2)
+                    if excel_row is not None:
+                        try:
+                            csv_column = int(self.csv_discount_value_column.get()) - 1
+                            excel_column = int(self.excel_discount_value_column.get()) - 1
+                            if self.csv_data[i][csv_column] != str(excel_row[0].iloc[excel_column]
+                                                                   * 100).replace('.', ','):
+                                if (not pd.isna(excel_row[0].iloc[excel_column]) and
+                                        self.csv_data[i][csv_column] != '0.0'):
+                                    difference = True
+                                    print(f'{self.csv_data[i][csv_column]} != {str(excel_row[0].iloc[excel_column]
+                                                                                   * 100).replace('.', ',')}')
+                        except Exception as e:
+                            messagebox.showwarning('Pam Price Tools - OSTRZEŻENIE:',
+                                                   f'Błąd weryfikacji danych (wartosć rabatu): {e}')
+
+                            pass
+                        try:
+                            csv_column = int(self.csv_discount_group_column.get()) - 1
+                            excel_column = int(self.excel_discount_group_column.get()) - 1
+                            if self.csv_data[i][csv_column] != str(excel_row[0].iloc[excel_column]):
+                                difference = True
+                                print(f'{self.csv_data[i][csv_column]} != {str(excel_row[0].iloc[excel_column])}')
+                        except Exception as e:
+                            messagebox.showwarning('Pam Price Tools - OSTRZEŻENIE:',
+                                                   f'Błąd weryfikacji danych (Grupa rabatu): {e}')
+                            pass
+                        try:
+                            csv_column = int(self.csv_base_price_column.get()) - 1
+                            excel_column = int(self.excel_base_price_column.get()) - 1
+                            if self.csv_data[i][csv_column] != str(excel_row[0].iloc[excel_column]).replace('.', ','):
+                                difference = True
+                                print(f'{self.csv_data[i][csv_column]} != {str(excel_row[0].iloc[excel_column]
+                                                                               ).replace('.', ',')}')
+                        except Exception as e:
+                            messagebox.showwarning('Pam Price Tools - OSTRZEŻENIE:',
+                                                   f'Błąd weryfikacji danych (Cena bazowa): {e}')
+                            pass
+                        try:
+                            csv_column = int(self.csv_catalogue_price_column.get()) - 1
+                            excel_column = int(self.excel_catalogue_price_column.get()) - 1
+                            if not pd.isna(excel_row[0].iloc[excel_column]) and excel_row[0].iloc[excel_column] != 0.0:
+                                if (self.csv_data[i][csv_column] !=
+                                        str(excel_row[0].iloc[excel_column]).replace('.', ',')):
+                                    print(f'{self.csv_data[i][csv_column]} != {str(excel_row[0].iloc[excel_column]
+                                                                                   ).replace('.', ',')}')
+                                    difference = True
+                            else:
+                                if (self.csv_data[i][csv_column] !=
+                                        self.csv_data[i][int(self.csv_base_price_column.get()) - 1]):
+                                    print(f'{self.csv_data[i][csv_column]} != '
+                                          f'{self.csv_data[i][int(self.csv_base_price_column.get()) - 1]}')
+                                    difference = True
+                        except Exception as e:
+                            messagebox.showwarning('Pam Price Tools - OSTRZEŻENIE:',
+                                                   f'Błąd weryfikacji danych (Cena katalogowa): {e}')
+                            pass
+                    if difference:
+                        differences.append(self.csv_data[i])
+                    break
+            if not position_found:
+                positions_not_found.append(search)
+            if position_found:
+                position_found = False
+        if self.save_not_found_index.get() and len(positions_not_found) > 0:
+            messagebox.showinfo('PPT - File save', 'Podaj lokalizację zapisu indexów nie znalezionych')
+            not_found_path = filedialog.asksaveasfilename(defaultextension='.txt', filetypes=[('Text', '*.txt')])
+            if not_found_path is not None and not_found_path != '' and not_found_path != '.txt':
+                txt_handler.save_txt(not_found_path, positions_not_found)
+
+        self.csv_progress_counter.set(f'Wielkość po operacji: {len(self.csv_data) + 1}')
+        self.progress_bar_csv['value'] = 100
+        self.start_button.config(state='enabled')
+        self.start_button_verify.config(state='enabled')
+        self.price_update_frame.update()
+        if len(differences) > 0:
+            self.show_verification_dialog(differences)
+        else:
+            messagebox.showinfo('Pam Price Tools', 'Nie znaleziono róznic w kolumnach')
 
     @staticmethod
     def center_dialog(dialog):
