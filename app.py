@@ -424,6 +424,7 @@ class App:
         positions_not_found = []
         self.start_button.config(state='disabled')
         self.start_button_verify.config(state='disabled')
+        was_error = False
         search_values, _ = excel_handler.get_column_data(self.excel_data, int(self.excel_search_column.get()))
         for i in range(int(self.csv_starting_row.get()) - 1, len(self.csv_data)):
             self.csv_progress_counter.set(f"{i} / {len(self.csv_data)}")
@@ -435,55 +436,73 @@ class App:
                     position_found = True
                     excel_row = excel_handler.get_row_data(self.excel_data, j + 2)
                     if excel_row is not None:
-                        try:
-                            csv_column = int(self.csv_discount_value_column.get()) - 1
-                            excel_column = int(self.excel_discount_value_column.get()) - 1
-                            if not pd.isna(excel_row[0].iloc[excel_column]):
-                                self.csv_data[i][csv_column] = str(excel_row[0].iloc[excel_column]
-                                                                   * 100).replace('.', ',')
-                            else:
-                                self.csv_data[i][csv_column] = '0.0'
-                        except Exception as e:
-                            messagebox.showwarning('Pam Price Tools - OSTRZEŻENIE:',
-                                                   f'Błąd wymiany danych (wartosć rabatu): {e}')
-                            pass
-                        try:
-                            csv_column = int(self.csv_discount_group_column.get()) - 1
-                            excel_column = int(self.excel_discount_group_column.get()) - 1
-                            if not pd.isna(excel_row[0].iloc[excel_column]):
-                                self.csv_data[i][csv_column] = str(excel_row[0].iloc[excel_column])
-                        except Exception as e:
-                            messagebox.showwarning('Pam Price Tools - OSTRZEŻENIE:',
-                                                   f'Błąd wymiany danych (Grupa rabatu): {e}')
-                            pass
-                        try:
-                            csv_column = int(self.csv_base_price_column.get()) - 1
-                            excel_column = int(self.excel_base_price_column.get()) - 1
-                            if not pd.isna(excel_row[0].iloc[excel_column]):
-                                self.csv_data[i][csv_column] = str(excel_row[0].iloc[excel_column]).replace('.', ',')
-                            else:
-                                self.csv_data[i][csv_column] = '0.0'
-                        except Exception as e:
-                            messagebox.showwarning('Pam Price Tools - OSTRZEŻENIE:',
-                                                   f'Błąd wymiany danych (Cena bazowa): {e}')
-                            pass
-                        try:
-                            csv_column = int(self.csv_catalogue_price_column.get()) - 1
-                            excel_column = int(self.excel_catalogue_price_column.get()) - 1
-                            if not pd.isna(excel_row[0].iloc[excel_column]) and excel_row[0].iloc[excel_column] != 0.0:
-                                self.csv_data[i][csv_column] = str(excel_row[0].iloc[excel_column]).replace('.', ',')
-                            else:
-                                self.csv_data[i][csv_column] = self.csv_data[i][
-                                    int(self.csv_base_price_column.get()) - 1]
-                        except Exception as e:
-                            messagebox.showwarning('Pam Price Tools - OSTRZEŻENIE:',
-                                                   f'Błąd wymiany danych (Cena katalogowa): {e}')
-                            pass
+                        if self.csv_discount_value_column.get() != '' and self.excel_discount_value_column.get() != '':
+                            try:
+                                csv_column = int(self.csv_discount_value_column.get()) - 1
+                                excel_column = int(self.excel_discount_value_column.get()) - 1
+                                if not pd.isna(excel_row[0].iloc[excel_column]):
+                                    self.csv_data[i][csv_column] = str(excel_row[0].iloc[excel_column]
+                                                                       * 100).replace('.', ',')
+                                else:
+                                    self.csv_data[i][csv_column] = '0.0'
+                            except Exception as e:
+                                messagebox.showwarning('Pam Price Tools - OSTRZEŻENIE:',
+                                                       f'Błąd wymiany danych (wartosć rabatu): {e}')
+                                was_error = True
+                                pass
+                        if str(self.csv_discount_group_column.get()) != '' and str(
+                                self.excel_discount_group_column.get()) != '':
+                            try:
+                                csv_column = int(self.csv_discount_group_column.get()) - 1
+                                excel_column = int(self.excel_discount_group_column.get()) - 1
+                                if not pd.isna(excel_row[0].iloc[excel_column]):
+                                    self.csv_data[i][csv_column] = str(excel_row[0].iloc[excel_column])
+                            except Exception as e:
+                                messagebox.showwarning('Pam Price Tools - OSTRZEŻENIE:',
+                                                       f'Błąd wymiany danych (Grupa rabatu): {e}')
+                                was_error = True
+                                pass
+                        if self.csv_base_price_column.get() != '' and self.excel_base_price_column.get() != '':
+                            try:
+                                csv_column = int(self.csv_base_price_column.get()) - 1
+                                excel_column = int(self.excel_base_price_column.get()) - 1
+                                if not pd.isna(excel_row[0].iloc[excel_column]):
+                                    self.csv_data[i][csv_column] = str(excel_row[0].iloc[excel_column]).replace('.',
+                                                                                                                ',')
+                                else:
+                                    self.csv_data[i][csv_column] = '0.0'
+                            except Exception as e:
+                                messagebox.showwarning('Pam Price Tools - OSTRZEŻENIE:',
+                                                       f'Błąd wymiany danych (Cena bazowa): {e}')
+                                was_error = True
+                                pass
+                        if self.csv_catalogue_price_column.get() != '' and self.excel_catalogue_price_column.get() != '':
+                            try:
+                                csv_column = int(self.csv_catalogue_price_column.get()) - 1
+                                excel_column = int(self.excel_catalogue_price_column.get()) - 1
+                                if not pd.isna(excel_row[0].iloc[excel_column]) and excel_row[0].iloc[
+                                    excel_column] != 0.0:
+                                    self.csv_data[i][csv_column] = str(excel_row[0].iloc[excel_column]).replace('.',
+                                                                                                                ',')
+                                else:
+                                    self.csv_data[i][csv_column] = self.csv_data[i][
+                                        int(self.csv_base_price_column.get()) - 1]
+                            except Exception as e:
+                                messagebox.showwarning('Pam Price Tools - OSTRZEŻENIE:',
+                                                       f'Błąd wymiany danych (Cena katalogowa): {e}')
+                                was_error = True
+                                pass
                     break
+            if was_error:
+                if messagebox.askyesno('Pam Price Tools', 'Czy anulować wymianę danych?'):
+                    break
+                was_error = False
+
             if not position_found:
                 positions_not_found.append(search)
             if position_found:
                 position_found = False
+
         if self.price_update_delete_option.get() and len(positions_not_found) > 0:
             for i in range(len(positions_not_found)):
                 updated_data, _ = csv_handler.remove_entry(self.csv_data, int(self.csv_search_column.get()) - 1,
@@ -661,6 +680,7 @@ class App:
         differences = []
         self.start_button.config(state='disabled')
         self.start_button_verify.config(state='disabled')
+        was_error = False
         search_values, _ = excel_handler.get_column_data(self.excel_data, int(self.excel_search_column.get()))
         for i in range(int(self.csv_starting_row.get()) - 1, len(self.csv_data)):
             self.csv_progress_counter.set(f"{i} / {len(self.csv_data)}")
@@ -673,83 +693,102 @@ class App:
                     position_found = True
                     excel_row = excel_handler.get_row_data(self.excel_data, j + 2)
                     if excel_row is not None:
-                        try:
-                            csv_column = int(self.csv_discount_value_column.get()) - 1
-                            excel_column = int(self.excel_discount_value_column.get()) - 1
-                            if self.csv_data[i][csv_column] != str(excel_row[0].iloc[excel_column]
-                                                                   * 100).replace('.', ','):
-                                if (not pd.isna(excel_row[0].iloc[excel_column]) and
-                                        self.csv_data[i][csv_column] != '0.0'):
-                                    difference = True
-                                    print(f'{self.csv_data[i][csv_column]} != {str(excel_row[0].iloc[excel_column]
-                                                                                   * 100).replace('.', ',')}')
-                        except Exception as e:
-                            messagebox.showwarning('Pam Price Tools - OSTRZEŻENIE:',
-                                                   f'Błąd weryfikacji danych (wartosć rabatu): {e}')
+                        if str(self.csv_discount_value_column.get()) != '' and str(
+                                self.excel_discount_value_column.get()) != '':
+                            try:
+                                csv_column = int(self.csv_discount_value_column.get()) - 1
+                                excel_column = int(self.excel_discount_value_column.get()) - 1
+                                if self.csv_data[i][csv_column] != str(excel_row[0].iloc[excel_column]
+                                                                       * 100).replace('.', ','):
+                                    if (not pd.isna(excel_row[0].iloc[excel_column]) and
+                                            self.csv_data[i][csv_column] != '0.0'):
+                                        difference = True
+                                        print(f'{self.csv_data[i][csv_column]} != {str(excel_row[0].iloc[excel_column]
+                                                                                       * 100).replace('.', ',')}')
+                            except Exception as e:
+                                messagebox.showwarning('Pam Price Tools - OSTRZEŻENIE:',
+                                                       f'Błąd weryfikacji danych (wartosć rabatu): {e}')
 
-                            pass
-                        try:
-                            csv_column = int(self.csv_discount_group_column.get()) - 1
-                            excel_column = int(self.excel_discount_group_column.get()) - 1
-                            if self.csv_data[i][csv_column] != str(excel_row[0].iloc[excel_column]):
-                                difference = True
-                                print(f'{self.csv_data[i][csv_column]} != {str(excel_row[0].iloc[excel_column])}')
-                        except Exception as e:
-                            messagebox.showwarning('Pam Price Tools - OSTRZEŻENIE:',
-                                                   f'Błąd weryfikacji danych (Grupa rabatu): {e}')
-                            pass
-                        try:
-                            csv_column = int(self.csv_base_price_column.get()) - 1
-                            excel_column = int(self.excel_base_price_column.get()) - 1
-                            if self.csv_data[i][csv_column] != str(excel_row[0].iloc[excel_column]).replace('.', ','):
-                                difference = True
-                                print(f'{self.csv_data[i][csv_column]} != {str(excel_row[0].iloc[excel_column]
-                                                                               ).replace('.', ',')}')
-                        except Exception as e:
-                            messagebox.showwarning('Pam Price Tools - OSTRZEŻENIE:',
-                                                   f'Błąd weryfikacji danych (Cena bazowa): {e}')
-                            pass
-                        try:
-                            csv_column = int(self.csv_catalogue_price_column.get()) - 1
-                            excel_column = int(self.excel_catalogue_price_column.get()) - 1
-                            if not pd.isna(excel_row[0].iloc[excel_column]) and excel_row[0].iloc[excel_column] != 0.0:
-                                if (self.csv_data[i][csv_column] !=
-                                        str(excel_row[0].iloc[excel_column]).replace('.', ',')):
+                                was_error = True
+                                pass
+                        if str(self.csv_discount_group_column.get()) != '' and str(
+                                self.excel_discount_group_column.get()) != '':
+                            try:
+                                csv_column = int(self.csv_discount_group_column.get()) - 1
+                                excel_column = int(self.excel_discount_group_column.get()) - 1
+                                if self.csv_data[i][csv_column] != str(excel_row[0].iloc[excel_column]):
+                                    difference = True
+                                    print(f'{self.csv_data[i][csv_column]} != {str(excel_row[0].iloc[excel_column])}')
+                            except Exception as e:
+                                messagebox.showwarning('Pam Price Tools - OSTRZEŻENIE:',
+                                                       f'Błąd weryfikacji danych (Grupa rabatu): {e}')
+                                was_error = True
+                                pass
+                        if str(self.csv_base_price_column.get()) != '' and str(
+                                self.excel_base_price_column.get()) != '':
+                            try:
+                                csv_column = int(self.csv_base_price_column.get()) - 1
+                                excel_column = int(self.excel_base_price_column.get()) - 1
+                                if self.csv_data[i][csv_column] != str(excel_row[0].iloc[excel_column]).replace('.',
+                                                                                                                ','):
+                                    difference = True
                                     print(f'{self.csv_data[i][csv_column]} != {str(excel_row[0].iloc[excel_column]
                                                                                    ).replace('.', ',')}')
-                                    difference = True
-                            else:
-                                if (self.csv_data[i][csv_column] !=
-                                        self.csv_data[i][int(self.csv_base_price_column.get()) - 1]):
-                                    print(f'{self.csv_data[i][csv_column]} != '
-                                          f'{self.csv_data[i][int(self.csv_base_price_column.get()) - 1]}')
-                                    difference = True
-                        except Exception as e:
-                            messagebox.showwarning('Pam Price Tools - OSTRZEŻENIE:',
-                                                   f'Błąd weryfikacji danych (Cena katalogowa): {e}')
-                            pass
+                            except Exception as e:
+                                messagebox.showwarning('Pam Price Tools - OSTRZEŻENIE:',
+                                                       f'Błąd weryfikacji danych (Cena bazowa): {e}')
+                                was_error = True
+                                pass
+                        if str(self.csv_catalogue_price_column.get()) != '' and str(
+                                self.excel_catalogue_price_column.get()) != '':
+                            try:
+                                csv_column = int(self.csv_catalogue_price_column.get()) - 1
+                                excel_column = int(self.excel_catalogue_price_column.get()) - 1
+                                if not pd.isna(excel_row[0].iloc[excel_column]) and excel_row[0].iloc[
+                                    excel_column] != 0.0:
+                                    if (self.csv_data[i][csv_column] !=
+                                            str(excel_row[0].iloc[excel_column]).replace('.', ',')):
+                                        print(f'{self.csv_data[i][csv_column]} != {str(excel_row[0].iloc[excel_column]
+                                                                                       ).replace('.', ',')}')
+                                        difference = True
+                                else:
+                                    if (self.csv_data[i][csv_column] !=
+                                            self.csv_data[i][int(self.csv_base_price_column.get()) - 1]):
+                                        print(f'{self.csv_data[i][csv_column]} != '
+                                              f'{self.csv_data[i][int(self.csv_base_price_column.get()) - 1]}')
+                                        difference = True
+                            except Exception as e:
+                                messagebox.showwarning('Pam Price Tools - OSTRZEŻENIE:',
+                                                       f'Błąd weryfikacji danych (Cena katalogowa): {e}')
+                                was_error = True
+                                pass
                     if difference:
                         differences.append(self.csv_data[i])
+                    break
+            if was_error:
+                if messagebox.askyesno('Pam Price Tools', 'Czy anulować weryfikację danych?'):
                     break
             if not position_found:
                 positions_not_found.append(search)
             if position_found:
                 position_found = False
-        if self.save_not_found_index.get() and len(positions_not_found) > 0:
-            messagebox.showinfo('PPT - File save', 'Podaj lokalizację zapisu indexów nie znalezionych')
-            not_found_path = filedialog.asksaveasfilename(defaultextension='.txt', filetypes=[('Text', '*.txt')])
-            if not_found_path is not None and not_found_path != '' and not_found_path != '.txt':
-                txt_handler.save_txt(not_found_path, positions_not_found)
+        if not was_error:
+            if self.save_not_found_index.get() and len(positions_not_found) > 0:
+                messagebox.showinfo('PPT - File save', 'Podaj lokalizację zapisu indexów nie znalezionych')
+                not_found_path = filedialog.asksaveasfilename(defaultextension='.txt', filetypes=[('Text', '*.txt')])
+                if not_found_path is not None and not_found_path != '' and not_found_path != '.txt':
+                    txt_handler.save_txt(not_found_path, positions_not_found)
 
-        self.csv_progress_counter.set(f'Wielkość po operacji: {len(self.csv_data) + 1}')
-        self.progress_bar_csv['value'] = 100
+            self.csv_progress_counter.set(f'Wielkość po operacji: {len(self.csv_data) + 1}')
+            self.progress_bar_csv['value'] = 100
+
+            if len(differences) > 0:
+                self.show_verification_dialog(differences)
+            else:
+                messagebox.showinfo('Pam Price Tools', 'Nie znaleziono róznic w kolumnach')
         self.start_button.config(state='enabled')
         self.start_button_verify.config(state='enabled')
         self.price_update_frame.update()
-        if len(differences) > 0:
-            self.show_verification_dialog(differences)
-        else:
-            messagebox.showinfo('Pam Price Tools', 'Nie znaleziono róznic w kolumnach')
 
     @staticmethod
     def center_dialog(dialog):
