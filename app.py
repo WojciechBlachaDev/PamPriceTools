@@ -530,8 +530,8 @@ class App:
                             try:
                                 csv_column = int(self.csv_catalogue_price_column.get()) - 1
                                 excel_column = int(self.excel_catalogue_price_column.get()) - 1
-                                if not pd.isna(excel_row[0].iloc[excel_column]) and excel_row[0].iloc[
-                                        excel_column] != 0.0:
+                                if (not pd.isna(excel_row[0].iloc[excel_column]) and
+                                        excel_row[0].iloc[excel_column] != 0.0):
                                     self.csv_data[i][csv_column] = str(excel_row[0].iloc[excel_column]).replace('.',
                                                                                                                 ',')
                                 else:
@@ -828,8 +828,8 @@ class App:
                             try:
                                 csv_column = int(self.csv_catalogue_price_column.get()) - 1
                                 excel_column = int(self.excel_catalogue_price_column.get()) - 1
-                                if not pd.isna(excel_row[0].iloc[excel_column]) and excel_row[0].iloc[
-                                        excel_column] != 0.0:
+                                if (not pd.isna(excel_row[0].iloc[excel_column]) and
+                                        excel_row[0].iloc[excel_column] != 0.0):
                                     if (self.csv_data[i][csv_column] !=
                                             str(excel_row[0].iloc[excel_column]).replace('.', ',')):
                                         print(f'{self.csv_data[i][csv_column]} != {str(excel_row[0].iloc[excel_column]
