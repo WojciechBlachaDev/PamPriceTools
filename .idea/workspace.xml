@@ -7,7 +7,6 @@
     <list default="true" id="74ebed60-b0e2-4468-941e-bb2d66c7508d" name="Changes" comment="&#10;- small fixes">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/exchange_settings.json" beforeDir="false" afterPath="$PROJECT_DIR$/exchange_settings.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -278,7 +277,15 @@
       <option name="project" value="LOCAL" />
       <updated>1717575433823</updated>
     </task>
-    <option name="localTasksCounter" value="25" />
+    <task id="LOCAL-00025" summary="&#10;- small fixes">
+      <option name="closed" value="true" />
+      <created>1717583034705</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1717583034705</updated>
+    </task>
+    <option name="localTasksCounter" value="26" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -303,5 +310,16 @@
     <MESSAGE value="Beta release&#10;- added verification&#10;- added messages &#10;- small fixes" />
     <MESSAGE value="&#10;- small fixes" />
     <option name="LAST_COMMIT_MESSAGE" value="&#10;- small fixes" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/app.py</url>
+          <line>888</line>
+          <option name="timeStamp" value="43" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

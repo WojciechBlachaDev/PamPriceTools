@@ -1,5 +1,7 @@
 import ctypes
 import os
+from tkinterdnd2 import DND_FILES
+import tkinterdnd2.TkinterDnD as TkinterDnD
 import tkinter as tk
 from tkinter import filedialog
 from tkinter import messagebox
@@ -13,6 +15,9 @@ from scripts import txt_handler
 
 class App:
     def __init__(self, main_root):
+
+        print(dir(TkinterDnD))
+
         self.start_button_verify = None
         self.save_not_found_check_box = None
         self.dialog = None
@@ -104,6 +109,7 @@ class App:
             csv_label.grid(row=0, column=0, sticky='w')
             csv_entry = ttk.Entry(self.files_frame, textvariable=self.csv_raw_path, width=100)
             csv_entry.grid(row=0, column=1, padx=5, pady=5)
+
             csv_button = ttk.Button(self.files_frame, text='Przeglądaj pliki', command=self.get_csv_path)
             csv_button.grid(row=0, column=2, padx=5, pady=5)
             excel_label = ttk.Label(self.files_frame, text='Wybierz plik Excel')
@@ -112,7 +118,10 @@ class App:
             excel_entry.grid(row=1, column=1, padx=5, pady=5)
             excel_button = ttk.Button(self.files_frame, text='Przeglądaj pliki', command=self.get_excel_path)
             excel_button.grid(row=1, column=2, padx=5, pady=5)
+            self.files_frame.drop_target_register(DND_FILES)
+            self.files_frame.dnd_bind('<<Drop>>', self.on_drop)
         except Exception as e:
+            print(e)
             messagebox.showerror('Pam Price Tools - ERROR:', f'Błąd podczas tworzenia strony obsługi plików: {e}')
 
     def set_data_exchange_page(self):
@@ -206,6 +215,8 @@ class App:
         self.save_button = ttk.Button(self.verify_frame, text='Zapisz dane', command=self.save_verified_file)
         self.save_button.grid(row=4, column=1, padx=5, pady=5)
         self.save_button.config(state='disabled')
+        self.verify_frame.drop_target_register(DND_FILES)
+        self.verify_frame.dnd_bind('<<Drop>>', self.on_drop2)
 
     def set_price_update_page(self):
         self.csv_progress_counter.set('0')
@@ -875,8 +886,38 @@ class App:
         self.skip_all = True
         self.dialog.destroy()
 
+    def on_drop(self, event):
+        files = event.data.strip().split('\n')
+        for dropped_file in files:
+            if not dropped_file:
+                continue
+            if not os.path.isfile(dropped_file):
+                messagebox.showinfo("Information", "Przeciągnięty obiekt nie jest plikiem.")
+                return
+        for dropped_file in files:
+            if dropped_file.endswith('.csv'):
+                self.csv_raw_path.set(dropped_file)
+            elif dropped_file.endswith('.xlsx'):
+                self.excel_raw_path.set(dropped_file)
+            else:
+                messagebox.showinfo("Information", "Przeciągnięty plik nie jest plikiem CSV ani Excel.")
+
+    def on_drop2(self, event):
+        files = event.data.strip().split('\n')
+        for dropped_file in files:
+            if not dropped_file:
+                continue
+            if not os.path.isfile(dropped_file):
+                messagebox.showinfo("Information", "Przeciągnięty obiekt nie jest plikiem.")
+                return
+        for dropped_file in files:
+            if dropped_file.endswith('.csv'):
+                self.csv_verify_path.set(dropped_file)
+            else:
+                messagebox.showinfo("Information", "Przeciągnięty plik nie jest plikiem CSV ani Excel.")
+
 
 if __name__ == '__main__':
-    root = tk.Tk()
+    root = TkinterDnD.Tk()
     app = App(root)
     root.mainloop()
