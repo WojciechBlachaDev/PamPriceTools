@@ -864,7 +864,7 @@ class App:
                     txt_handler.save_txt(not_found_path, positions_not_found)
                 else:
                     messagebox.showwarning('Pam price Tools - OSTRZEŻENIE:', 'Nie zapisano listy '
-                                                                         'indexów, które nie zostały odnalezione.')
+                                                                             'indexów, które nie zostały odnalezione.')
             self.csv_progress_counter.set(f'Wielkość po operacji: {len(self.csv_data) + 1}')
             self.progress_bar_csv['value'] = 100
             if len(differences) > 0:
