@@ -178,7 +178,7 @@ class App:
 
     def set_verify_page(self):
         self.verify_frame = ttk.Frame(self.notebook)
-        self.verify_frame.grid(row=0, column=0, sticky='nsew')
+        self.verify_frame.grid(row=0, column=0, sticky='nsew', )
         self.notebook.add(self.verify_frame, text='Weryfikuj plik CSV')
 
         csv_label = ttk.Label(self.verify_frame, text='Wybierz plik CSV')
@@ -458,8 +458,8 @@ class App:
                                  f'Wykryto błąd podczas odczytu danych kolumny pliku excel - {error}')
             return
         for i in range(int(self.csv_starting_row.get()) - 1, len(self.csv_data)):
-            self.csv_progress_counter.set(f"{i} / {len(self.csv_data)}")
-            self.progress_bar_csv['value'] = (i / len(self.csv_data)) * 100
+            self.csv_progress_counter.set(f"{i + 1} / {len(self.csv_data)}")
+            self.progress_bar_csv['value'] = (i / len(self.csv_data)) * 100 + 1
             self.price_update_frame.update()
             search = self.csv_data[i][int(self.csv_search_column.get()) - 1]
             for j in range(int(self.excel_starting_row.get()), len(self.excel_data)):
@@ -554,12 +554,17 @@ class App:
             not_found_path = filedialog.asksaveasfilename(defaultextension='.txt', filetypes=[('Text', '*.txt')])
             if not_found_path is not None and not_found_path != '' and not_found_path != '.txt':
                 txt_handler.save_txt(not_found_path, positions_not_found)
+            else:
+                messagebox.showwarning('Pam price Tools - OSTRZEŻENIE:', 'Nie zapisano listy '
+                                                                         'indexów, które nie zostały odnalezione.')
         messagebox.showinfo('PPT - File save', 'Podaj lokalizację zapisu pliku CSV')
         new_path = filedialog.asksaveasfilename(defaultextension=".csv", filetypes=[("CSV Files", "*.csv")])
         if new_path is not None and new_path != '' and new_path != '.csv':
             result = csv_handler.save_csv(new_path, self.headers, self.csv_data)
             if not result[0]:
                 messagebox.showerror('Pam Price Tools', f'Wykryto błąd zapisu danych pliku CSV: {result[1]}')
+        else:
+            messagebox.showwarning('Pam Price Tools - OSTRZEŻENIE:', 'Nie zapisano wygenerowanego pliku')
         self.csv_progress_counter.set(f'Wielkość po operacji: {len(self.csv_data) + 1}')
         self.progress_bar_csv['value'] = 100
         self.start_button.config(state='enabled')
@@ -744,7 +749,7 @@ class App:
             return
         for i in range(int(self.csv_starting_row.get()) - 1, len(self.csv_data)):
             self.csv_progress_counter.set(f"{i} / {len(self.csv_data)}")
-            self.progress_bar_csv['value'] = (i / len(self.csv_data)) * 100
+            self.progress_bar_csv['value'] = (i / len(self.csv_data)) * 100 + 1
             self.price_update_frame.update()
             search = self.csv_data[i][int(self.csv_search_column.get()) - 1]
             for j in range(int(self.excel_starting_row.get()), len(self.excel_data)):
@@ -842,10 +847,11 @@ class App:
                 not_found_path = filedialog.asksaveasfilename(defaultextension='.txt', filetypes=[('Text', '*.txt')])
                 if not_found_path is not None and not_found_path != '' and not_found_path != '.txt':
                     txt_handler.save_txt(not_found_path, positions_not_found)
-
+                else:
+                    messagebox.showwarning('Pam price Tools - OSTRZEŻENIE:', 'Nie zapisano listy '
+                                                                         'indexów, które nie zostały odnalezione.')
             self.csv_progress_counter.set(f'Wielkość po operacji: {len(self.csv_data) + 1}')
             self.progress_bar_csv['value'] = 100
-
             if len(differences) > 0:
                 self.show_verification_dialog(differences)
             else:
