@@ -1,7 +1,7 @@
 import ctypes
 import os
 from tkinterdnd2 import DND_FILES
-import tkinterdnd2.TkinterDnD as TkinterDnD
+import tkinterdnd2
 import tkinter as tk
 from tkinter import filedialog
 from tkinter import messagebox
@@ -15,9 +15,6 @@ from scripts import txt_handler
 
 class App:
     def __init__(self, main_root):
-
-        print(dir(TkinterDnD))
-
         self.start_button_verify = None
         self.save_not_found_check_box = None
         self.dialog = None
@@ -951,6 +948,6 @@ class App:
 
 
 if __name__ == '__main__':
-    root = TkinterDnD.Tk()
+    root = tkinterdnd2.Tk()
     app = App(root)
     root.mainloop()

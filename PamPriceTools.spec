@@ -5,7 +5,7 @@ a = Analysis(
     ['app.py'],
     pathex=[],
     binaries=[],
-    datas=[],
+    datas=[('.venv/Lib/site-packages/tkdnd/tkdnd/win64', 'tkdnd')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},
