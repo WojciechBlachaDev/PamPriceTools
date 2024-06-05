@@ -82,6 +82,7 @@ class App:
         self.set_price_update_page()
         self.set_verify_page()
         self.items_to_delete = []
+        self.startup = True
 
     def set_main_window(self, main_root):
         try:
@@ -390,6 +391,7 @@ class App:
             if error is not None:
                 messagebox.showerror('Pam Price Tools - BŁĄD:', f'Wystapił bład odczytu danych z pliku CSV - {error}')
             self.csv_columns_count = len(self.csv_data[0])
+            self.update_data_exchange_frame()
 
     def get_csv_verify_path(self):
         path = filedialog.askopenfilename(filetypes=[("CSV Files", "*.csv")])
@@ -650,6 +652,7 @@ class App:
         scrollbar = ttk.Scrollbar(frame, orient="vertical", command=data_listbox.yview)
         scrollbar.grid(row=0, column=1, sticky='ns')
         data_listbox.config(yscrollcommand=scrollbar.set)
+        data_listbox.insert(tk.END, self.csv_data[0])
         for item in data_list:
             data_listbox.insert(tk.END, item)
         button_frame = ttk.Frame(self.dialog)
@@ -692,6 +695,7 @@ class App:
         scrollbar = ttk.Scrollbar(frame, orient="vertical", command=data_listbox.yview)
         scrollbar.grid(row=0, column=1, sticky='ns')
         data_listbox.config(yscrollcommand=scrollbar.set)
+        data_listbox.insert(tk.END, self.csv_data[0])
         for item in data_list:
             data_listbox.insert(tk.END, item)
         button_frame = ttk.Frame(self.dialog)
@@ -897,8 +901,25 @@ class App:
         for dropped_file in files:
             if dropped_file.endswith('.csv'):
                 self.csv_raw_path.set(dropped_file)
+                error, self.headers, self.csv_data = csv_handler.read_csv(self.csv_raw_path.get())
+                if error is not None:
+                    messagebox.showerror('Pam Price Tools - BŁĄD:',
+                                         f'Wystapił bład odczytu danych z pliku CSV - {error}')
+                self.csv_columns_count = len(self.csv_data[0])
+                self.update_data_exchange_frame()
             elif dropped_file.endswith('.xlsx'):
                 self.excel_raw_path.set(dropped_file)
+                self.excel_data, error = excel_handler.xlsx_read(self.excel_raw_path.get())
+                if error is not None:
+                    messagebox.showerror('Pam Price Tools - BŁĄD:',
+                                         f'Wykryto błąd podczas odczytu danych pliku excel - {error}')
+                    return
+                self.excel_columns_count, error = excel_handler.get_columns_count(self.excel_data)
+                if error is not None:
+                    messagebox.showerror('Pam Price Tools - BŁĄD:',
+                                         f'Wykryto błąd podczas obliczania ilości kolumn pliku excel - {error}')
+                    return
+                self.update_data_exchange_frame()
             else:
                 messagebox.showinfo("Information", "Przeciągnięty plik nie jest plikiem CSV ani Excel.")
 
@@ -913,6 +934,18 @@ class App:
         for dropped_file in files:
             if dropped_file.endswith('.csv'):
                 self.csv_verify_path.set(dropped_file)
+                error, self.headers_verify, self.csv_data_verify = csv_handler.read_csv(self.csv_verify_path.get())
+                if error is not None:
+                    messagebox.showerror('Pam Price Tools - BŁĄD:',
+                                         f'Wystapił bład odczytu danych z pliku CSV - {error}')
+                self.csv_columns_count_verify = len(self.csv_data_verify[0])
+                for item in self.csv_data_verify[0]:
+                    self.multiple_input_listbox.insert(tk.END, item)
+                self.verify_start_button.config(state='enabled')
+                self.empty_start_button.config(state='enabled')
+                self.start_button_verify.config(state='enabled')
+                self.save_button.config(state='enabled')
+                self.verify_frame.update()
             else:
                 messagebox.showinfo("Information", "Przeciągnięty plik nie jest plikiem CSV ani Excel.")
 
