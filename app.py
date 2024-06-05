@@ -253,7 +253,9 @@ class App:
             'csv_start': self.csv_starting_row.get()
         }
         self.settings[self.current_settings.get()] = new_settings
-        json_handler.save_settings(self.settings, os.path.join(os.getcwd(), 'exchange_settings.json'))
+        result = json_handler.save_settings(self.settings, os.path.join(os.getcwd(), 'exchange_settings.json'))
+        if not result[0]:
+            messagebox.showerror('Pam Price Tools - BŁĄD:', f'Wykryto bład podczas zapisu pliku ustawień: {result[1]}')
         self.update_data_exchange_frame_settings()
 
     def load_data_exchange_settings(self):
@@ -278,7 +280,9 @@ class App:
         for key, value in self.settings.items():
             if key != self.current_settings.get():
                 new_settings[key] = value
-        json_handler.save_settings(new_settings, os.path.join(os.getcwd(), 'exchange_settings.json'))
+        result = json_handler.save_settings(new_settings, os.path.join(os.getcwd(), 'exchange_settings.json'))
+        if not result[0]:
+            messagebox.showerror('Pam Price Tools - BŁĄD:', f'Wykryto błąd podczas usuwania ustawień {result[1]}')
         self.settings = new_settings
         self.update_data_exchange_frame()
 
@@ -371,14 +375,18 @@ class App:
         path = filedialog.askopenfilename(filetypes=[("CSV Files", "*.csv")])
         if path is not None and path != '' and path != '.csv':
             self.csv_raw_path.set(path)
-            _, self.headers, self.csv_data = csv_handler.read_csv(self.csv_raw_path.get())
+            error, self.headers, self.csv_data = csv_handler.read_csv(self.csv_raw_path.get())
+            if error is not None:
+                messagebox.showerror('Pam Price Tools - BŁĄD:', f'Wystapił bład odczytu danych z pliku CSV - {error}')
             self.csv_columns_count = len(self.csv_data[0])
 
     def get_csv_verify_path(self):
         path = filedialog.askopenfilename(filetypes=[("CSV Files", "*.csv")])
         if path is not None and path != '' and path != '.csv':
             self.csv_verify_path.set(path)
-            _, self.headers_verify, self.csv_data_verify = csv_handler.read_csv(self.csv_verify_path.get())
+            error, self.headers_verify, self.csv_data_verify = csv_handler.read_csv(self.csv_verify_path.get())
+            if error is not None:
+                messagebox.showerror('Pam Price Tools - BŁĄD:', f'Wystapił bład odczytu danych z pliku CSV - {error}')
             self.csv_columns_count_verify = len(self.csv_data_verify[0])
             for item in self.csv_data_verify[0]:
                 self.multiple_input_listbox.insert(tk.END, item)
@@ -392,8 +400,16 @@ class App:
         path = filedialog.askopenfilename(filetypes=[("Excel Files", "*.xlsx")])
         if path is not None and path != '' and path != '.xlsx':
             self.excel_raw_path.set(path)
-            self.excel_data, _ = excel_handler.xlsx_read(self.excel_raw_path.get())
-            self.excel_columns_count, _ = excel_handler.get_columns_count(self.excel_data)
+            self.excel_data, error = excel_handler.xlsx_read(self.excel_raw_path.get())
+            if error is not None:
+                messagebox.showerror('Pam Price Tools - BŁĄD:',
+                                     f'Wykryto błąd podczas odczytu danych pliku excel - {error}')
+                return
+            self.excel_columns_count, error = excel_handler.get_columns_count(self.excel_data)
+            if error is not None:
+                messagebox.showerror('Pam Price Tools - BŁĄD:',
+                                     f'Wykryto błąd podczas obliczania ilości kolumn pliku excel - {error}')
+                return
             self.update_data_exchange_frame()
 
     def update_prices(self):
@@ -416,16 +432,31 @@ class App:
                 or self.csv_raw_path.get() == '' or self.csv_raw_path.get() == '.csv'):
             messagebox.showwarning('Pam Price Tools - OSTRZEŻENIE:', f'Wybierz pliki CSV i Excell')
             return
-        _, self.headers, self.csv_data = csv_handler.read_csv(self.csv_raw_path.get())
+        error, self.headers, self.csv_data = csv_handler.read_csv(self.csv_raw_path.get())
+        if error is not None:
+            messagebox.showerror('Pam Price Tools - BŁĄD:', f'Wykryto błąd podczas ładowania pliku CSV - {error}')
+            return
         self.csv_columns_count = len(self.csv_data[0])
-        self.excel_data, _ = excel_handler.xlsx_read(self.excel_raw_path.get())
-        self.excel_columns_count, _ = excel_handler.get_columns_count(self.excel_data)
+        self.excel_data, error = excel_handler.xlsx_read(self.excel_raw_path.get())
+        if error is not None:
+            messagebox.showerror('Pam Price Tools - BŁĄD:',
+                                 f'Wykryto błąd podczas odczytu danych pliku excel - {error}')
+            return
+        self.excel_columns_count, error = excel_handler.get_columns_count(self.excel_data)
+        if error is not None:
+            messagebox.showerror('Pam Price Tools - BŁĄD:',
+                                 f'Wykryto błąd podczas obliczania ilości kolumn pliku excel - {error}')
+            return
         position_found = False
         positions_not_found = []
         self.start_button.config(state='disabled')
         self.start_button_verify.config(state='disabled')
         was_error = False
-        search_values, _ = excel_handler.get_column_data(self.excel_data, int(self.excel_search_column.get()))
+        search_values, error = excel_handler.get_column_data(self.excel_data, int(self.excel_search_column.get()))
+        if error is not None:
+            messagebox.showerror('Pam Price Tools - BŁĄD:',
+                                 f'Wykryto błąd podczas odczytu danych kolumny pliku excel - {error}')
+            return
         for i in range(int(self.csv_starting_row.get()) - 1, len(self.csv_data)):
             self.csv_progress_counter.set(f"{i} / {len(self.csv_data)}")
             self.progress_bar_csv['value'] = (i / len(self.csv_data)) * 100
@@ -435,6 +466,11 @@ class App:
                 if search == search_values[j]:
                     position_found = True
                     excel_row = excel_handler.get_row_data(self.excel_data, j + 2)
+                    if excel_row[1] is not None:
+                        messagebox.showerror('Pam Price Tools - BŁĄD:',
+                                             f'Wykryto błąd podczas odczytu danych wiersza '
+                                             f'pliku excel - {excel_row[1]}')
+                        return
                     if excel_row is not None:
                         if self.csv_discount_value_column.get() != '' and self.excel_discount_value_column.get() != '':
                             try:
@@ -476,12 +512,13 @@ class App:
                                                        f'Błąd wymiany danych (Cena bazowa): {e}')
                                 was_error = True
                                 pass
-                        if self.csv_catalogue_price_column.get() != '' and self.excel_catalogue_price_column.get() != '':
+                        if (self.csv_catalogue_price_column.get() != '' and
+                                self.excel_catalogue_price_column.get() != ''):
                             try:
                                 csv_column = int(self.csv_catalogue_price_column.get()) - 1
                                 excel_column = int(self.excel_catalogue_price_column.get()) - 1
                                 if not pd.isna(excel_row[0].iloc[excel_column]) and excel_row[0].iloc[
-                                    excel_column] != 0.0:
+                                        excel_column] != 0.0:
                                     self.csv_data[i][csv_column] = str(excel_row[0].iloc[excel_column]).replace('.',
                                                                                                                 ',')
                                 else:
@@ -505,8 +542,11 @@ class App:
 
         if self.price_update_delete_option.get() and len(positions_not_found) > 0:
             for i in range(len(positions_not_found)):
-                updated_data, _ = csv_handler.remove_entry(self.csv_data, int(self.csv_search_column.get()) - 1,
-                                                           positions_not_found[i])
+                updated_data, error = csv_handler.remove_entry(self.csv_data, int(self.csv_search_column.get()) - 1,
+                                                               positions_not_found[i])
+                if error is not None:
+                    messagebox.showerror('Pam Price Tools - BŁĄD:',
+                                         f'Wykryto błąd podczas usuwania wiersza pliku CSV - {error}')
                 if updated_data is not None:
                     self.csv_data = updated_data
         if self.save_not_found_index.get() and len(positions_not_found) > 0:
@@ -517,7 +557,9 @@ class App:
         messagebox.showinfo('PPT - File save', 'Podaj lokalizację zapisu pliku CSV')
         new_path = filedialog.asksaveasfilename(defaultextension=".csv", filetypes=[("CSV Files", "*.csv")])
         if new_path is not None and new_path != '' and new_path != '.csv':
-            csv_handler.save_csv(new_path, self.headers, self.csv_data)
+            result = csv_handler.save_csv(new_path, self.headers, self.csv_data)
+            if not result[0]:
+                messagebox.showerror('Pam Price Tools', f'Wykryto błąd zapisu danych pliku CSV: {result[1]}')
         self.csv_progress_counter.set(f'Wielkość po operacji: {len(self.csv_data) + 1}')
         self.progress_bar_csv['value'] = 100
         self.start_button.config(state='enabled')
@@ -529,8 +571,11 @@ class App:
         self.multiple_inputs_selected = [self.multiple_input_listbox.get(i) for i in multiple_length]
         print(len(self.csv_data_verify))
         for selected_item in self.multiple_inputs_selected:
-            duplicates, _ = csv_handler.multiple_data_check(self.csv_data_verify,
-                                                            self.csv_data_verify[0].index(selected_item))
+            duplicates, error = csv_handler.multiple_data_check(self.csv_data_verify,
+                                                                self.csv_data_verify[0].index(selected_item))
+            if error is not None:
+                messagebox.showerror('Pam Price Tools - BŁĄD',
+                                     f'Wystąpił błąd sprawdzania duplikatów dla wybranej kolumny - {error}')
             for duplicate in duplicates:
                 data_list = []
                 for i in range(len(self.csv_data_verify)):
@@ -671,17 +716,32 @@ class App:
                 or self.csv_raw_path.get() == '' or self.csv_raw_path.get() == '.csv'):
             messagebox.showwarning('Pam Price Tools - OSTRZEŻENIE:', f'Wybierz pliki CSV i Excell')
             return
-        _, self.headers, self.csv_data = csv_handler.read_csv(self.csv_raw_path.get())
+        error, self.headers, self.csv_data = csv_handler.read_csv(self.csv_raw_path.get())
+        if error is not None:
+            messagebox.showerror('Pam Price Tools - BŁĄD:', f'Wykryto błąd podczas ładowania pliku CSV - {error}')
+            return
         self.csv_columns_count = len(self.csv_data[0])
-        self.excel_data, _ = excel_handler.xlsx_read(self.excel_raw_path.get())
-        self.excel_columns_count, _ = excel_handler.get_columns_count(self.excel_data)
+        self.excel_data, error = excel_handler.xlsx_read(self.excel_raw_path.get())
+        if error is not None:
+            messagebox.showerror('Pam Price Tools - BŁĄD:',
+                                 f'Wykryto błąd podczas odczytu danych pliku excel - {error}')
+            return
+        self.excel_columns_count, error = excel_handler.get_columns_count(self.excel_data)
+        if error is not None:
+            messagebox.showerror('Pam Price Tools - BŁĄD:',
+                                 f'Wykryto błąd podczas obliczania ilości kolumn pliku excel - {error}')
+            return
         position_found = False
         positions_not_found = []
         differences = []
         self.start_button.config(state='disabled')
         self.start_button_verify.config(state='disabled')
         was_error = False
-        search_values, _ = excel_handler.get_column_data(self.excel_data, int(self.excel_search_column.get()))
+        search_values, error = excel_handler.get_column_data(self.excel_data, int(self.excel_search_column.get()))
+        if error is not None:
+            messagebox.showerror('Pam Price Tools - BŁĄD:',
+                                 f'Wykryto błąd podczas odczytu danych kolumny pliku excel - {error}')
+            return
         for i in range(int(self.csv_starting_row.get()) - 1, len(self.csv_data)):
             self.csv_progress_counter.set(f"{i} / {len(self.csv_data)}")
             self.progress_bar_csv['value'] = (i / len(self.csv_data)) * 100
@@ -692,6 +752,10 @@ class App:
                     difference = False
                     position_found = True
                     excel_row = excel_handler.get_row_data(self.excel_data, j + 2)
+                    if excel_row[1] is not None:
+                        messagebox.showerror('Pam Price Tools - BŁĄD:', f'Wykryto błąd podczas odczytu '
+                                                                        f'danych wiersza pliku excel - {excel_row[1]}')
+                        return
                     if excel_row is not None:
                         if str(self.csv_discount_value_column.get()) != '' and str(
                                 self.excel_discount_value_column.get()) != '':
@@ -745,7 +809,7 @@ class App:
                                 csv_column = int(self.csv_catalogue_price_column.get()) - 1
                                 excel_column = int(self.excel_catalogue_price_column.get()) - 1
                                 if not pd.isna(excel_row[0].iloc[excel_column]) and excel_row[0].iloc[
-                                    excel_column] != 0.0:
+                                        excel_column] != 0.0:
                                     if (self.csv_data[i][csv_column] !=
                                             str(excel_row[0].iloc[excel_column]).replace('.', ',')):
                                         print(f'{self.csv_data[i][csv_column]} != {str(excel_row[0].iloc[excel_column]

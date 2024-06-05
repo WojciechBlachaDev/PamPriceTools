@@ -13,20 +13,6 @@
         "excel_start": "2",
         "csv_start": "4"
     },
-    "test": {
-        "excel_discount_g": "",
-        "csv_discount_g": "",
-        "excel_discount_v": "",
-        "csv_discount_v": "",
-        "excel_base_price": "",
-        "csv_base_price": "",
-        "excel_cat_price": "",
-        "csv_cat_price": "",
-        "excel_search": "1",
-        "csv_search": "5",
-        "excel_start": "1",
-        "csv_start": "4"
-    },
     "Segenia_Nowe": {
         "excel_discount_g": "9",
         "csv_discount_g": "8",
