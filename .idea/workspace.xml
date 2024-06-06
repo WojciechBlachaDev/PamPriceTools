@@ -4,14 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="74ebed60-b0e2-4468-941e-bb2d66c7508d" name="Changes" comment="-bugfixes&#10;- added caalculate price after discount function&#10;- added no_discount column in excel">
-      <change afterPath="$PROJECT_DIR$/sample_files/cennik_siegenia.pdf" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/sample_files/testowy_cennik.xlsm" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/scripts/pdf_tools.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/test.py" afterDir="false" />
+    <list default="true" id="74ebed60-b0e2-4468-941e-bb2d66c7508d" name="Changes" comment="- extending with pdf ocr reader (WIP)">
+      <change afterPath="$PROJECT_DIR$/test2.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/excel_handler.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/excel_handler.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/pdf_tools.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/pdf_tools.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -60,8 +56,9 @@
     "Python.csv_handler.executor": "Debug",
     "Python.excel_handler.executor": "Run",
     "Python.gui.executor": "Debug",
-    "Python.pdf_tools.executor": "Debug",
+    "Python.pdf_tools.executor": "Run",
     "Python.test.executor": "Run",
+    "Python.test2.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "git-widget-placeholder": "master",
     "ignore.virus.scanning.warn.message": "true",
@@ -377,7 +374,15 @@
       <option name="project" value="LOCAL" />
       <updated>1717659884108</updated>
     </task>
-    <option name="localTasksCounter" value="36" />
+    <task id="LOCAL-00036" summary="- extending with pdf ocr reader (WIP)">
+      <option name="closed" value="true" />
+      <created>1717676977281</created>
+      <option name="number" value="00036" />
+      <option name="presentableId" value="LOCAL-00036" />
+      <option name="project" value="LOCAL" />
+      <updated>1717676977281</updated>
+    </task>
+    <option name="localTasksCounter" value="37" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -406,20 +411,21 @@
     <MESSAGE value="Updated requrements" />
     <MESSAGE value="-bugfixes" />
     <MESSAGE value="-bugfixes&#10;- added caalculate price after discount function&#10;- added no_discount column in excel" />
-    <option name="LAST_COMMIT_MESSAGE" value="-bugfixes&#10;- added caalculate price after discount function&#10;- added no_discount column in excel" />
+    <MESSAGE value="- extending with pdf ocr reader (WIP)" />
+    <option name="LAST_COMMIT_MESSAGE" value="- extending with pdf ocr reader (WIP)" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/scripts/excel_handler.py</url>
-          <line>83</line>
-          <option name="timeStamp" value="16" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/scripts/excel_handler.py</url>
           <line>58</line>
           <option name="timeStamp" value="17" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/scripts/pdf_tools.py</url>
+          <line>40</line>
+          <option name="timeStamp" value="19" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

@@ -1,5 +1,6 @@
 import os
 import pdfplumber
+import re
 
 
 def read_file(path):
@@ -32,3 +33,38 @@ def read_standard_discounts(data, start_header, end_header):
         return standard_discounts
     except Exception as e:
         return None
+
+
+def read_non_standard_prices(data, start_header, end_header):
+
+    try:
+        start_index = data.find(start_header)
+        end_index = data.find(end_header)
+        if start_index == -1 or end_index == -1:
+            raise Exception('xD')
+        standard_discounts_page = data[start_index:end_index]
+        lines = standard_discounts_page.split('\n')
+        for line in lines:
+            index = ''
+
+            elements = line.split(' ')  # Podzielenie linii na poszczególne elementy
+            for element in elements:
+                index_filter = [
+                    'Materiał',
+                    '',
+                    'Ilość',
+                    'Potwierdzenie',
+                    'Siedziba:',
+                    'Telefon',
+                    'PORTAL',
+                    '/'
+                ]
+                if len(element) > 4 and element not in index_filter:
+                    index = elements[0]
+            print(index)
+
+
+
+
+    except Exception as e:
+        print(e)
