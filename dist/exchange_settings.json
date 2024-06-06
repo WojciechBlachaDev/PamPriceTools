@@ -1,19 +1,5 @@
 {
-    "Segenia": {
-        "excel_discount_g": "9",
-        "csv_discount_g": "8",
-        "excel_discount_v": "16",
-        "csv_discount_v": "7",
-        "excel_base_price": "15",
-        "csv_base_price": "10",
-        "excel_cat_price": "17",
-        "csv_cat_price": "11",
-        "excel_search": "1",
-        "csv_search": "5",
-        "excel_start": "2",
-        "csv_start": "4"
-    },
-    "Segenia_nowe": {
+    "Segenia_Nowe": {
         "excel_discount_g": "9",
         "csv_discount_g": "8",
         "excel_discount_v": "16",
@@ -21,10 +7,11 @@
         "excel_base_price": "15",
         "csv_base_price": "10",
         "excel_cat_price": "",
-        "csv_cat_price": "",
+        "csv_cat_price": "11",
         "excel_search": "1",
         "csv_search": "5",
         "excel_start": "2",
-        "csv_start": "4"
+        "csv_start": "4",
+        "no_discount_column": "6"
     }
 }

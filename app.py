@@ -15,6 +15,8 @@ from scripts import txt_handler
 
 class App:
     def __init__(self, main_root):
+        self.calculate_checkbox = None
+        self.excel_no_discount_column = None
         self.start_button_verify = None
         self.save_not_found_check_box = None
         self.dialog = None
@@ -47,6 +49,7 @@ class App:
         self.excel_starting_row = tk.StringVar()
         self.csv_starting_row = tk.StringVar()
         self.save_not_found_index = tk.BooleanVar()
+        self.calculate_catalogue_price = tk.BooleanVar()
         self.root = None
         self.price_update_delete_option = tk.BooleanVar()
         self.settings_name = ''
@@ -166,11 +169,16 @@ class App:
         self.csv_catalogue_price_column = ttk.Combobox(self.data_exchange_frame, values=csv_columns)
         self.csv_catalogue_price_column.grid(row=9, column=0, padx=5, pady=5)
 
-        self.set_descriptions_rows('Wprowadź wiersz startowy danych w plikach', 10)
+        label = ttk.Label(self.data_exchange_frame, text='Wybierz kolumnę z opcją grupy nierabatowej w pliku excel')
+        label.grid(row=10, column=1, padx=5, pady=5)
+        self.excel_no_discount_column = ttk.Combobox(self.data_exchange_frame, values=excel_columns)
+        self.excel_no_discount_column.grid(row=11, column=1, padx=5, pady=5)
+
+        self.set_descriptions_rows('Wprowadź wiersz startowy danych w plikach', 12)
         excel_starting_row = ttk.Entry(self.data_exchange_frame, textvariable=self.excel_starting_row)
-        excel_starting_row.grid(row=11, column=2, padx=5, pady=5)
+        excel_starting_row.grid(row=13, column=2, padx=5, pady=5)
         csv_starting_row = ttk.Entry(self.data_exchange_frame, textvariable=self.csv_starting_row)
-        csv_starting_row.grid(row=11, column=0, padx=5, pady=5)
+        csv_starting_row.grid(row=13, column=0, padx=5, pady=5)
 
         settings_label = ttk.Label(self.data_exchange_frame, text='Zapisane ustawienia')
         settings_label.grid(row=0, column=4, padx=10, pady=10)
@@ -239,12 +247,16 @@ class App:
         not_found_label.grid(row=4, column=0, padx=5, pady=5)
         progress_label_csv = ttk.Label(self.price_update_frame, text='Postęp pliku CSV')
         progress_label_csv.grid(row=1, column=0, padx=5, pady=5)
+        calculate_label = ttk.Label(self.price_update_frame, text='Kalkuluj wartości ceny katologowej')
+        calculate_label.grid(row=5, column=0, padx=5, pady=5)
+        self.calculate_checkbox = ttk.Checkbutton(self.price_update_frame, variable=self.calculate_catalogue_price)
+        self.calculate_checkbox.grid(row=5, column=1, padx=5, pady=5)
         self.start_button = ttk.Button(self.price_update_frame,
                                        text='Aktualizuj bazę', command=self.update_prices)
-        self.start_button.grid(row=5, column=1, padx=10, pady=10)
+        self.start_button.grid(row=6, column=1, padx=10, pady=10)
         self.start_button_verify = ttk.Button(self.price_update_frame,
                                               text='Porównaj ceny z plików', command=self.verify_prices)
-        self.start_button_verify.grid(row=6, column=1, padx=10, pady=10)
+        self.start_button_verify.grid(row=7, column=1, padx=10, pady=10)
 
     def save_data_exchange_profile(self):
         new_settings = {
@@ -259,7 +271,8 @@ class App:
             'excel_search': self.excel_search_column.get(),
             'csv_search': self.csv_search_column.get(),
             'excel_start': self.excel_starting_row.get(),
-            'csv_start': self.csv_starting_row.get()
+            'csv_start': self.csv_starting_row.get(),
+            'no_discount_column': self.excel_no_discount_column.get()
         }
         self.settings[self.current_settings.get()] = new_settings
         result = json_handler.save_settings(self.settings, os.path.join(os.getcwd(), 'exchange_settings.json'))
@@ -283,6 +296,7 @@ class App:
                 self.csv_search_column.set(self.settings[key]['csv_search'])
                 self.excel_starting_row.set(self.settings[key]['excel_start'])
                 self.csv_starting_row.set(self.settings[key]['csv_start'])
+                self.excel_no_discount_column.set(self.settings[key]['no_discount_column'])
 
     def delete_data_exchange_settings(self):
         new_settings = {}
@@ -347,11 +361,16 @@ class App:
         self.csv_catalogue_price_column = ttk.Combobox(self.data_exchange_frame, values=csv_columns)
         self.csv_catalogue_price_column.grid(row=9, column=0, padx=5, pady=5)
 
-        self.set_descriptions_rows('Wprowadź wiersz startowy danych w plikach', 10)
+        label = ttk.Label(self.data_exchange_frame, text='Wybierz kolumnę z opcją grupy nierabatowej w pliku excel')
+        label.grid(row=10, column=1, padx=5, pady=5)
+        self.excel_no_discount_column = ttk.Combobox(self.data_exchange_frame, values=excel_columns)
+        self.excel_no_discount_column.grid(row=11, column=1, padx=5, pady=5)
+
+        self.set_descriptions_rows('Wprowadź wiersz startowy danych w plikach', 12)
         excel_starting_row = ttk.Entry(self.data_exchange_frame, textvariable=self.excel_starting_row)
-        excel_starting_row.grid(row=11, column=2, padx=5, pady=5)
+        excel_starting_row.grid(row=13, column=2, padx=5, pady=5)
         csv_starting_row = ttk.Entry(self.data_exchange_frame, textvariable=self.csv_starting_row)
-        csv_starting_row.grid(row=11, column=0, padx=5, pady=5)
+        csv_starting_row.grid(row=13, column=0, padx=5, pady=5)
 
         settings_label = ttk.Label(self.data_exchange_frame, text='Zapisane ustawienia')
         settings_label.grid(row=0, column=4, padx=10, pady=10)
@@ -467,7 +486,7 @@ class App:
             messagebox.showerror('Pam Price Tools - BŁĄD:',
                                  f'Wykryto błąd podczas odczytu danych kolumny pliku excel - {error}')
             return
-        for i in range(int(self.csv_starting_row.get()) - 1, len(self.csv_data)):
+        for i in range(int(self.csv_starting_row.get()) - 2, len(self.csv_data)):
             self.csv_progress_counter.set(f"{i + 1} / {len(self.csv_data)}")
             self.progress_bar_csv['value'] = (i / len(self.csv_data)) * 100 + 1
             self.price_update_frame.update()
@@ -486,7 +505,8 @@ class App:
                             try:
                                 csv_column = int(self.csv_discount_value_column.get()) - 1
                                 excel_column = int(self.excel_discount_value_column.get()) - 1
-                                if not pd.isna(excel_row[0].iloc[excel_column]):
+                                no_discount = pd.isna(excel_row[0].iloc[int(self.excel_no_discount_column.get()) - 1])
+                                if not pd.isna(excel_row[0].iloc[excel_column]) and no_discount:
                                     self.csv_data[i][csv_column] = str(excel_row[0].iloc[excel_column]
                                                                        * 100).replace('.', ',')
                                 else:
@@ -527,8 +547,7 @@ class App:
                             try:
                                 csv_column = int(self.csv_catalogue_price_column.get()) - 1
                                 excel_column = int(self.excel_catalogue_price_column.get()) - 1
-                                if (not pd.isna(excel_row[0].iloc[excel_column]) and
-                                        excel_row[0].iloc[excel_column] != 0.0):
+                                if not pd.isna(excel_row[0].iloc[excel_column]):
                                     self.csv_data[i][csv_column] = str(excel_row[0].iloc[excel_column]).replace('.',
                                                                                                                 ',')
                                 else:
@@ -539,6 +558,22 @@ class App:
                                                        f'Błąd wymiany danych (Cena katalogowa): {e}')
                                 was_error = True
                                 pass
+                        else:
+                            if self.excel_no_discount_column.get() is None or self.excel_no_discount_column.get() == '':
+                                messagebox.showerror('Pam Price Tools - BŁĄD: Nie wybrano kolumny z'
+                                                     ' wartością nierabatowalną')
+                                pass
+                            if (pd.isna(excel_row[0].iloc[int(self.excel_no_discount_column.get()) - 1]) and
+                                    self.calculate_catalogue_price.get()):
+                                csv_column = int(self.csv_catalogue_price_column.get()) - 1
+                                excel_column = int(self.excel_base_price_column.get()) - 1
+                                base_price = float(excel_row[0].iloc[excel_column])
+                                discount_value = float(excel_row[0].iloc
+                                                       [int(self.excel_discount_value_column.get()) - 1])
+                                price = float(base_price - (base_price * discount_value))
+                                self.csv_data[i][csv_column] = str(price).replace('.', ',')
+                                print(self.csv_data[i][csv_column])
+
                     break
             if was_error:
                 if messagebox.askyesno('Pam Price Tools', 'Czy anulować wymianę danych?'):
@@ -759,7 +794,7 @@ class App:
             messagebox.showerror('Pam Price Tools - BŁĄD:',
                                  f'Wykryto błąd podczas odczytu danych kolumny pliku excel - {error}')
             return
-        for i in range(int(self.csv_starting_row.get()) - 1, len(self.csv_data)):
+        for i in range(int(self.csv_starting_row.get()) - 2, len(self.csv_data)):
             self.csv_progress_counter.set(f"{i} / {len(self.csv_data)}")
             self.progress_bar_csv['value'] = (i / len(self.csv_data)) * 100 + 1
             self.price_update_frame.update()
@@ -779,10 +814,11 @@ class App:
                             try:
                                 csv_column = int(self.csv_discount_value_column.get()) - 1
                                 excel_column = int(self.excel_discount_value_column.get()) - 1
+                                no_discount = pd.isna(excel_row[0].iloc[int(self.excel_no_discount_column.get()) - 1])
                                 if self.csv_data[i][csv_column] != str(excel_row[0].iloc[excel_column]
                                                                        * 100).replace('.', ','):
-                                    if (not pd.isna(excel_row[0].iloc[excel_column]) and
-                                            self.csv_data[i][csv_column] != '0.0'):
+                                    if (not pd.isna(excel_row[0].iloc[excel_column]) and self.csv_data[i]
+                                            [csv_column] != '0.0') and not no_discount:
                                         difference = True
                                         print(f'{self.csv_data[i][csv_column]} != {str(excel_row[0].iloc[excel_column]
                                                                                        * 100).replace('.', ',')}')
