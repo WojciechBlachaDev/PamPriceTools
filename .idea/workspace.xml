@@ -4,17 +4,14 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="74ebed60-b0e2-4468-941e-bb2d66c7508d" name="Changes" comment="-bugfixes">
+    <list default="true" id="74ebed60-b0e2-4468-941e-bb2d66c7508d" name="Changes" comment="-bugfixes&#10;- added caalculate price after discount function&#10;- added no_discount column in excel">
+      <change afterPath="$PROJECT_DIR$/sample_files/cennik_siegenia.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/sample_files/testowy_cennik.xlsm" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/scripts/pdf_tools.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/test.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/PamPriceTools/Analysis-00.toc" beforeDir="false" afterPath="$PROJECT_DIR$/build/PamPriceTools/Analysis-00.toc" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/PamPriceTools/EXE-00.toc" beforeDir="false" afterPath="$PROJECT_DIR$/build/PamPriceTools/EXE-00.toc" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/PamPriceTools/PKG-00.toc" beforeDir="false" afterPath="$PROJECT_DIR$/build/PamPriceTools/PKG-00.toc" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/PamPriceTools/PamPriceTools.pkg" beforeDir="false" afterPath="$PROJECT_DIR$/build/PamPriceTools/PamPriceTools.pkg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dist/PamPriceTools.exe" beforeDir="false" afterPath="$PROJECT_DIR$/dist/PamPriceTools.exe" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dist/PamPriceTools.zip" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dist/exchange_settings.json" beforeDir="false" afterPath="$PROJECT_DIR$/dist/exchange_settings.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/exchange_settings.json" beforeDir="false" afterPath="$PROJECT_DIR$/exchange_settings.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/excel_handler.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/excel_handler.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -63,15 +60,18 @@
     "Python.csv_handler.executor": "Debug",
     "Python.excel_handler.executor": "Run",
     "Python.gui.executor": "Debug",
+    "Python.pdf_tools.executor": "Debug",
+    "Python.test.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "git-widget-placeholder": "master",
     "ignore.virus.scanning.warn.message": "true",
-    "last_opened_file_path": "C:/Users/MSI/Documents/PythonProjects/PPT/dist",
+    "last_opened_file_path": "C:/Users/MSI/Documents/PythonProjects/PPT/sample_files",
     "run.code.analysis.last.selected.profile": "aDefault"
   }
 }]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\MSI\Documents\PythonProjects\PPT\sample_files" />
       <recent name="C:\Users\MSI\Documents\PythonProjects\PPT\dist" />
       <recent name="C:\Users\MSI\Documents\PythonProjects\PamPriceTools" />
     </key>
@@ -369,7 +369,15 @@
       <option name="project" value="LOCAL" />
       <updated>1717592287716</updated>
     </task>
-    <option name="localTasksCounter" value="35" />
+    <task id="LOCAL-00035" summary="-bugfixes&#10;- added caalculate price after discount function&#10;- added no_discount column in excel">
+      <option name="closed" value="true" />
+      <created>1717659884108</created>
+      <option name="number" value="00035" />
+      <option name="presentableId" value="LOCAL-00035" />
+      <option name="project" value="LOCAL" />
+      <updated>1717659884108</updated>
+    </task>
+    <option name="localTasksCounter" value="36" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -397,15 +405,21 @@
     <MESSAGE value="???" />
     <MESSAGE value="Updated requrements" />
     <MESSAGE value="-bugfixes" />
-    <option name="LAST_COMMIT_MESSAGE" value="-bugfixes" />
+    <MESSAGE value="-bugfixes&#10;- added caalculate price after discount function&#10;- added no_discount column in excel" />
+    <option name="LAST_COMMIT_MESSAGE" value="-bugfixes&#10;- added caalculate price after discount function&#10;- added no_discount column in excel" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/app.py</url>
-          <line>573</line>
-          <option name="timeStamp" value="4" />
+          <url>file://$PROJECT_DIR$/scripts/excel_handler.py</url>
+          <line>83</line>
+          <option name="timeStamp" value="16" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/scripts/excel_handler.py</url>
+          <line>58</line>
+          <option name="timeStamp" value="17" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
