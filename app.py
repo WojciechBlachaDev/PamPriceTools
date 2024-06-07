@@ -684,6 +684,7 @@ class App:
                                     if data[0] == search:
                                         self.csv_data[i][int(self.csv_base_price_column.get()) - 1] = data[1]
                                         self.csv_data[i][int(self.csv_catalogue_price_column.get()) - 1] = data[1]
+                                        self.csv_data[i][int(self.csv_discount_value_column.get()) - 1] = '0.0'
                                         print(f'{search}: {data[1]}')
                     break
             if was_error:
@@ -932,17 +933,42 @@ class App:
                         if str(self.csv_discount_value_column.get()) != '' and str(
                                 self.excel_discount_value_column.get()) != '':
                             try:
-                                csv_column = int(self.csv_discount_value_column.get()) - 1
-                                excel_column = int(self.excel_discount_value_column.get()) - 1
-                                no_discount = pd.isna(excel_row[0].iloc[int(self.excel_no_discount_column.get()) - 1])
-                                if self.csv_data[i][csv_column] != str(excel_row[0].iloc[excel_column]
-                                                                       * 100).replace('.', ','):
-                                    if ((not pd.isna(excel_row[0].iloc[excel_column])
-                                         and self.csv_data[i][csv_column] != '0.0')
-                                            and not no_discount):
-                                        difference = True
-                                        print(f'{self.csv_data[i][csv_column]} != {str(excel_row[0].iloc[excel_column]
-                                                                                       * 100).replace('.', ',')}')
+                                if not self.include_special_prices.get():
+                                    csv_column = int(self.csv_discount_value_column.get()) - 1
+                                    excel_column = int(self.excel_discount_value_column.get()) - 1
+                                    no_discount = pd.isna(
+                                        excel_row[0].iloc[int(self.excel_no_discount_column.get()) - 1])
+                                    if self.csv_data[i][csv_column] != str(excel_row[0].iloc[excel_column]
+                                                                           * 100).replace('.', ','):
+                                        if ((not pd.isna(excel_row[0].iloc[excel_column])
+                                             and self.csv_data[i][csv_column] != '0.0')
+                                                and not no_discount):
+                                            difference = True
+                                            print(
+                                                f'{self.csv_data[i][csv_column]} != {str(excel_row[0].iloc[excel_column]
+                                                                                         * 100).replace('.', ',')}')
+                                else:
+                                    special_price_found = False
+                                    for data in self.pdf_special_prices:
+                                        if search == data[0]:
+                                            if self.csv_data[i][int(self.csv_discount_value_column.get()) - 1] != '0.0':
+                                                difference = True
+                                            special_price_found = True
+                                        if not special_price_found:
+                                            csv_column = int(self.csv_discount_value_column.get()) - 1
+                                            excel_column = int(self.excel_discount_value_column.get()) - 1
+                                            no_discount = pd.isna(
+                                                excel_row[0].iloc[int(self.excel_no_discount_column.get()) - 1])
+                                            if self.csv_data[i][csv_column] != str(excel_row[0].iloc[excel_column]
+                                                                                   * 100).replace('.', ','):
+                                                if ((not pd.isna(excel_row[0].iloc[excel_column])
+                                                     and self.csv_data[i][csv_column] != '0.0')
+                                                        and not no_discount):
+                                                    difference = True
+                                                    print(
+                                                        f'{self.csv_data[i][csv_column]} != '
+                                                        f'{str(excel_row[0].iloc[excel_column] * 100).replace('.',
+                                                                                                              ',')}')
                             except Exception as e:
                                 messagebox.showwarning('Pam Price Tools - OSTRZEŻENIE:',
                                                        f'Błąd weryfikacji danych (wartosć rabatu): {e}')
