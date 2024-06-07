@@ -1,7 +1,5 @@
-import time
 import pandas as pd
 import xlwings as xw
-import openpyxl
 
 
 def xlsx_read(path):
@@ -57,27 +55,18 @@ def open_workbook(file_path):
 
 def fill_discount_table_2(data, pdf_data, wb, sheet_name):
     ws = wb.sheets[sheet_name]
-    not_found = []
     for item in pdf_data:
         for i in range(len(data)):
             if str(data.iloc[i, 1]) == item[0]:
                 cell = ws.cells(i + 2, 3)
                 new_value = item[1].split('%')
-                print(new_value)
-
                 cell.value = float(new_value[0].replace(',', '.')) / 100
                 break
             if '0' + str(data.iloc[i, 1]) == item[0]:
                 cell = ws.cells(i + 2, 3)
                 new_value = item[1].split('%')
-                print(new_value)
-
                 cell.value = float(new_value[0].replace(',', '.')) / 100
                 break
-            not_found.append(f'{str(data.iloc[i, 1])} != {item[0]}')
-    for r in not_found:
-        print(r)
-
 
 
 def fill_discount_table(data, wb, sheet_name):
@@ -87,6 +76,7 @@ def fill_discount_table(data, wb, sheet_name):
         for value_to_find, value_to_fill in data:
             print(f'Rabat {value_to_find}: {value_to_fill}')
             cell = ws.api.UsedRange.Find(value_to_find)
+            cell2 = None
             try:
                 cell2 = ws.api.UsedRange.Find(float(value_to_find + '.0'))
             except Exception as e:
@@ -102,9 +92,27 @@ def fill_discount_table(data, wb, sheet_name):
                 adjacent_cell = ws.cells(cell.Row, cell.Column + 1)
                 adjacent_cell.value = float(new_value[0].replace(',', '.')) / 100
                 counter += 1
+            if not cell and not cell2:
+                new_value = 0,0
+                adjacent_cell = ws.cells(cell.Row, cell.Column + 1)
+                adjacent_cell.value = new_value
         print(counter)
     except Exception as e:
         print(e)
+
+
+def fill_empty_cells_in_column_c(wb, sheet_name):
+    try:
+        ws = wb.sheets[sheet_name]
+        used_range = ws.range('B1:B' + str(ws.cells.last_cell.row)).value
+        for i, cell_value in enumerate(used_range, start=1):
+            if cell_value is not None:
+                cell_in_c = ws.range(f'C{i}')
+                if cell_in_c.value is None:
+                    cell_in_c.value = 0.0
+        print("Zakończono wypełnianie pustych komórek.")
+    except Exception as e:
+        print(f'Wystąpił błąd: {e}')
 
 
 def start_macro(wb, macro_tag):

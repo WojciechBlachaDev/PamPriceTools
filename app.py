@@ -11,68 +11,96 @@ from scripts import csv_handler
 from scripts import excel_handler
 from scripts import json_handler
 from scripts import txt_handler
+from scripts import pdf_tools
 
 
 class App:
     def __init__(self, main_root):
-        self.calculate_checkbox = None
-        self.excel_no_discount_column = None
-        self.start_button_verify = None
-        self.save_not_found_check_box = None
+        # Gui elements
+        # Main
+        self.special_price_checkbox = None
+        self.root = None
         self.dialog = None
-        self.save_button = None
-        self.empty_start_button = None
-        self.multiple_input_listbox = None
-        self.csv_descriptions = []
-        self.multiple_inputs_selected = None
-        self.delete_bool = False
-        self.skip_all = False
-        self.verify_start_button = None
-        self.verify_start = None
-        self.verify_progressbar = None
+        self.notebook = None
+        # Pages
         self.verify_frame = None
-        self.start_button = None
-        self.delete_option_check_box = None
-        self.progress_bar_excel_value = None
-        self.progress_bar_csv_value = None
-        self.progress_bar_excel = None
-        self.progress_bar_csv = None
+        self.files_frame = None
         self.price_update_frame = None
         self.data_exchange_frame = None
-        self.csv_data = None
-        self.headers = None
-        self.csv_data_verify = None
-        self.headers_verify = None
-        self.excel_data = None
-        self.files_frame = None
-        self.notebook = None
-        self.excel_starting_row = tk.StringVar()
+        # CheckBox
+        self.calculate_checkbox = None
+        self.save_not_found_check_box = None
+        self.multiple_inputs_selected = None
+        self.delete_option_check_box = None
+        # Buttons
+        self.start_button_verify = None
+        self.save_button = None
+        self.empty_start_button = None
+        self.start_button = None
+        self.verify_start = None
+        self.verify_start_button = None
+        # ListBox
+        self.multiple_input_listbox = None
+        self.excel_no_discount_column = None
+        # ProgressBar
+        self.verify_progressbar = None
+        self.progress_bar_csv = None
+        self.progress_bar_excel = None
+        # Labels
+        self.progress_bar_excel_value = None
+        self.progress_bar_csv_value = None
+
+        # VARIABLES
+        # CSV
         self.csv_starting_row = tk.StringVar()
-        self.save_not_found_index = tk.BooleanVar()
-        self.calculate_catalogue_price = tk.BooleanVar()
-        self.root = None
-        self.price_update_delete_option = tk.BooleanVar()
-        self.settings_name = ''
-        self.settings = json_handler.load_settings(os.path.join(os.getcwd(), 'exchange_settings.json'))
-        if self.settings == {}:
-            json_handler.save_settings(self.settings, os.path.join(os.getcwd(), 'exchange_settings.json'))
         self.csv_raw_path = tk.StringVar()
-        self.excel_raw_path = tk.StringVar()
+        self.csv_descriptions = []
+        self.csv_data = None
+        self.csv_data_verify = None
+        self.headers = None
+        self.headers_verify = None
         self.csv_verify_path = tk.StringVar()
-        self.excel_columns_count = 0
         self.csv_columns_count = 0
         self.csv_columns_count_verify = 0
-        self.excel_search_column = None
         self.csv_search_column = None
-        self.excel_discount_value_column = None
-        self.excel_discount_group_column = None
-        self.excel_base_price_column = None
-        self.excel_catalogue_price_column = None
         self.csv_discount_value_column = None
         self.csv_discount_group_column = None
         self.csv_base_price_column = None
         self.csv_catalogue_price_column = None
+        # EXCEL
+        self.excel_data = None
+        self.excel_starting_row = tk.StringVar()
+        self.excel_raw_path = tk.StringVar()
+        self.excel_search_column = None
+        self.excel_discount_value_column = None
+        self.excel_discount_group_column = None
+        self.excel_base_price_column = None
+        self.excel_catalogue_price_column = None
+        # PDF
+        self.pdf_raw_path = tk.StringVar()
+        self.pdf_data = None
+        self.pdf_standard_discounts = None
+        self.pdf_special_prices = None
+        self.pdf_search_phrase_1 = tk.StringVar()
+        self.pdf_search_phrase_2 = tk.StringVar()
+        self.pdf_search_phrase_3 = tk.StringVar()
+        # OTHERS
+        self.save_not_found_index = tk.BooleanVar()
+        self.calculate_catalogue_price = tk.BooleanVar()
+        self.include_special_prices = tk.BooleanVar()
+        self.price_update_delete_option = tk.BooleanVar()
+        self.settings_name = ''
         self.current_settings = None
+        self.items_to_delete = []
+        self.startup = True
+        self.delete_bool = False
+        self.skip_all = False
+        # SETTINGS WITH LOAD FUNCTION
+        self.settings = json_handler.load_settings(os.path.join(os.getcwd(), 'exchange_settings.json'))
+        if self.settings == {}:
+            json_handler.save_settings(self.settings, os.path.join(os.getcwd(), 'exchange_settings.json'))
+        self.excel_columns_count = 0
+        # APP STARTUP
         self.set_main_window(main_root)
         self.set_notebook()
         self.set_file_page()
@@ -81,8 +109,6 @@ class App:
         self.excel_progress_counter = tk.StringVar()
         self.set_price_update_page()
         self.set_verify_page()
-        self.items_to_delete = []
-        self.startup = True
 
     def set_main_window(self, main_root):
         try:
@@ -106,19 +132,42 @@ class App:
             self.files_frame = ttk.Frame(self.notebook)
             self.files_frame.grid(row=0, column=0, sticky='nsew')
             self.notebook.add(self.files_frame, text='Pliki')
+
             csv_label = ttk.Label(self.files_frame, text='Wybierz plik CSV')
             csv_label.grid(row=0, column=0, sticky='w')
+            excel_label = ttk.Label(self.files_frame, text='Wybierz plik Excel')
+            excel_label.grid(row=1, column=0, sticky='w')
+            pdf_label = ttk.Label(self.files_frame, text='Wybierz plik cennika PDF (Opcjonalnie)')
+            pdf_label.grid(row=2, column=0, sticky='w')
+            pdf_label1 = ttk.Label(self.files_frame, text='Podaj nagłówek rozpoczęcia rabatów standard')
+            pdf_label1.grid(row=3, column=0, sticky='w')
+            pdf_label2 = ttk.Label(self.files_frame, text='Podaj nagłówek zakończenia rabatów standard')
+            pdf_label2.grid(row=4, column=0, sticky='w')
+            pdf_label3 = ttk.Label(self.files_frame, text='Podaj nagłówek zakończenia cen specjalnych')
+            pdf_label3.grid(row=5, column=0, sticky='w')
+
             csv_entry = ttk.Entry(self.files_frame, textvariable=self.csv_raw_path, width=100)
             csv_entry.grid(row=0, column=1, padx=5, pady=5)
+            excel_entry = ttk.Entry(self.files_frame, textvariable=self.excel_raw_path, width=100)
+            excel_entry.grid(row=1, column=1, padx=5, pady=5)
+            pdf_entry = ttk.Entry(self.files_frame, textvariable=self.pdf_raw_path, width=100)
+            pdf_entry.grid(row=2, column=1, padx=5, pady=5)
+            pdf_search_phrase_1 = ttk.Entry(self.files_frame, textvariable=self.pdf_search_phrase_1, width=100)
+            pdf_search_phrase_1.grid(row=3, column=1, padx=5, pady=5)
+            pdf_search_phrase_2 = ttk.Entry(self.files_frame, textvariable=self.pdf_search_phrase_2, width=100)
+            pdf_search_phrase_2.grid(row=4, column=1, padx=5, pady=5)
+            pdf_search_phrase_3 = ttk.Entry(self.files_frame, textvariable=self.pdf_search_phrase_3, width=100)
+            pdf_search_phrase_3.grid(row=5, column=1, padx=5, pady=5)
 
             csv_button = ttk.Button(self.files_frame, text='Przeglądaj pliki', command=self.get_csv_path)
             csv_button.grid(row=0, column=2, padx=5, pady=5)
-            excel_label = ttk.Label(self.files_frame, text='Wybierz plik Excel')
-            excel_label.grid(row=1, column=0, sticky='w')
-            excel_entry = ttk.Entry(self.files_frame, textvariable=self.excel_raw_path, width=100)
-            excel_entry.grid(row=1, column=1, padx=5, pady=5)
             excel_button = ttk.Button(self.files_frame, text='Przeglądaj pliki', command=self.get_excel_path)
             excel_button.grid(row=1, column=2, padx=5, pady=5)
+            pdf_button = ttk.Button(self.files_frame, text='Przeglądaj pliki', command=self.get_pdf_path)
+            pdf_button.grid(row=2, column=2, padx=5, pady=5)
+            load_pdf_button = ttk.Button(self.files_frame, text='Ładuj dane cennika PDF', command=self.load_pdf)
+            load_pdf_button.grid(row=6, column=1, padx=5, pady=5)
+
             self.files_frame.drop_target_register(DND_FILES)
             self.files_frame.dnd_bind('<<Drop>>', self.on_drop)
         except Exception as e:
@@ -249,14 +298,18 @@ class App:
         progress_label_csv.grid(row=1, column=0, padx=5, pady=5)
         calculate_label = ttk.Label(self.price_update_frame, text='Kalkuluj wartości ceny katologowej')
         calculate_label.grid(row=5, column=0, padx=5, pady=5)
+        special_price_label = ttk.Label(self.price_update_frame, text='Uwzględniaj ceny specjalne cennika PDF')
+        special_price_label.grid(row=6, column=0, padx=5, pady=5)
         self.calculate_checkbox = ttk.Checkbutton(self.price_update_frame, variable=self.calculate_catalogue_price)
         self.calculate_checkbox.grid(row=5, column=1, padx=5, pady=5)
+        self.special_price_checkbox = ttk.Checkbutton(self.price_update_frame, variable=self.include_special_prices)
+        self.special_price_checkbox.grid(row=6, column=1, padx=5, pady=5)
         self.start_button = ttk.Button(self.price_update_frame,
                                        text='Aktualizuj bazę', command=self.update_prices)
-        self.start_button.grid(row=6, column=1, padx=10, pady=10)
+        self.start_button.grid(row=7, column=1, padx=10, pady=10)
         self.start_button_verify = ttk.Button(self.price_update_frame,
                                               text='Porównaj ceny z plików', command=self.verify_prices)
-        self.start_button_verify.grid(row=7, column=1, padx=10, pady=10)
+        self.start_button_verify.grid(row=8, column=1, padx=10, pady=10)
 
     def save_data_exchange_profile(self):
         new_settings = {
@@ -441,6 +494,49 @@ class App:
                 return
             self.update_data_exchange_frame()
 
+    def get_pdf_path(self):
+        path = filedialog.askopenfilename(filetypes=[("Pdf Files", "*.pdf")])
+        if path is not None and path != '' and path != '.pdf':
+            self.pdf_raw_path.set(path)
+        else:
+            messagebox.showerror('Pam Price Tools - BŁĄD', 'Błąd wczytywania ścieżki do pliku PDF!')
+
+    def load_pdf(self):
+        if self.pdf_raw_path.get() == '' or self.pdf_raw_path.get() is None:
+            messagebox.showerror('Pam Price Tools', 'Sciezka do pliku PDF jest pusta!')
+            return
+        if self.pdf_search_phrase_1.get() == '' or self.pdf_search_phrase_1.get() is None:
+            messagebox.showerror('Pam Price Tools', 'Podaj dane wyszukiwania w pliku PDF')
+            return
+        if self.pdf_search_phrase_2.get() == '' or self.pdf_search_phrase_2.get() is None:
+            messagebox.showerror('Pam Price Tools', 'Podaj dane wyszukiwania w pliku PDF')
+            return
+        if self.pdf_search_phrase_3.get() == '' or self.pdf_search_phrase_3.get() is None:
+            messagebox.showerror('Pam Price Tools', 'Podaj dane wyszukiwania w pliku PDF')
+            return
+        self.pdf_data, error = pdf_tools.read_file(self.pdf_raw_path.get())
+        if error is not None:
+            messagebox.showerror('Pam Price Tools - BŁĄD',
+                                 f'Wykryto błąd podczas ładowania danych pliku PDF - {error}')
+        self.pdf_standard_discounts, error = pdf_tools.read_standard_discounts(self.pdf_data,
+                                                                               self.pdf_search_phrase_1.get(),
+                                                                               self.pdf_search_phrase_2.get())
+        if error is not None:
+            messagebox.showerror('Pam Price Tools - BŁĄD',
+                                 f'Wykryto błąd podczas szukania rabatów standardowych - {error}')
+        self.pdf_special_prices, error = pdf_tools.read_non_standard_prices(self.pdf_data,
+                                                                            self.pdf_search_phrase_2.get(),
+                                                                            self.pdf_search_phrase_3.get())
+        if messagebox.askyesno('Pam Price Tools', 'Czy wygenerować nowy cennik w programie excel?'):
+            excel_path = os.path.join(os.getcwd(), 'sample_excel.xlsm')
+            macro_name = 'Makro1'
+            my_app, workbook = excel_handler.open_workbook(excel_path)
+            readed_data, error = excel_handler.xlsx_read(excel_path)
+            excel_handler.fill_discount_table_2(readed_data, self.pdf_standard_discounts, workbook, 'Warunki Handlowe')
+            excel_handler.fill_empty_cells_in_column_c(workbook, 'Warunki Handlowe')
+            excel_handler.start_macro(workbook, macro_name)
+            workbook.close()
+
     def update_prices(self):
         if (self.csv_search_column.get() is None or self.excel_search_column.get() is None or
                 self.csv_starting_row.get() is None or self.excel_starting_row.get() is None):
@@ -476,6 +572,15 @@ class App:
             messagebox.showerror('Pam Price Tools - BŁĄD:',
                                  f'Wykryto błąd podczas obliczania ilości kolumn pliku excel - {error}')
             return
+        if self.include_special_prices.get():
+            if len(self.pdf_data) <= 0 or self.pdf_data is None:
+                messagebox.showerror('Pam Price Tools - BŁĄD:',
+                                     f'Najpierw załaduj plik PDF')
+                return
+            if len(self.pdf_special_prices) <= 0 or self.pdf_special_prices is None:
+                messagebox.showerror('Pam Price Tools - BŁĄD:',
+                                     f'Najpierw załaduj plik PDF')
+                return
         position_found = False
         positions_not_found = []
         self.start_button.config(state='disabled')
@@ -573,7 +678,13 @@ class App:
                                 price = float(base_price - (base_price * discount_value))
                                 self.csv_data[i][csv_column] = str(price).replace('.', ',')
                                 print(self.csv_data[i][csv_column])
-
+                        if self.include_special_prices.get():
+                            if len(self.pdf_special_prices) > 0:
+                                for data in self.pdf_special_prices:
+                                    if data[0] == search:
+                                        self.csv_data[i][int(self.csv_base_price_column.get()) - 1] = data[1]
+                                        self.csv_data[i][int(self.csv_catalogue_price_column.get()) - 1] = data[1]
+                                        print(f'{search}: {data[1]}')
                     break
             if was_error:
                 if messagebox.askyesno('Pam Price Tools', 'Czy anulować wymianę danych?'):
@@ -783,6 +894,15 @@ class App:
             messagebox.showerror('Pam Price Tools - BŁĄD:',
                                  f'Wykryto błąd podczas obliczania ilości kolumn pliku excel - {error}')
             return
+        if self.include_special_prices.get():
+            if len(self.pdf_data) <= 0 or self.pdf_data is None:
+                messagebox.showerror('Pam Price Tools - BŁĄD:',
+                                     f'Najpierw załaduj plik PDF')
+                return
+            if len(self.pdf_special_prices) <= 0 or self.pdf_special_prices is None:
+                messagebox.showerror('Pam Price Tools - BŁĄD:',
+                                     f'Najpierw załaduj plik PDF')
+                return
         position_found = False
         positions_not_found = []
         differences = []
@@ -817,8 +937,9 @@ class App:
                                 no_discount = pd.isna(excel_row[0].iloc[int(self.excel_no_discount_column.get()) - 1])
                                 if self.csv_data[i][csv_column] != str(excel_row[0].iloc[excel_column]
                                                                        * 100).replace('.', ','):
-                                    if (not pd.isna(excel_row[0].iloc[excel_column]) and self.csv_data[i]
-                                            [csv_column] != '0.0') and not no_discount:
+                                    if ((not pd.isna(excel_row[0].iloc[excel_column])
+                                         and self.csv_data[i][csv_column] != '0.0')
+                                            and not no_discount):
                                         difference = True
                                         print(f'{self.csv_data[i][csv_column]} != {str(excel_row[0].iloc[excel_column]
                                                                                        * 100).replace('.', ',')}')
@@ -844,13 +965,31 @@ class App:
                         if str(self.csv_base_price_column.get()) != '' and str(
                                 self.excel_base_price_column.get()) != '':
                             try:
-                                csv_column = int(self.csv_base_price_column.get()) - 1
-                                excel_column = int(self.excel_base_price_column.get()) - 1
-                                if self.csv_data[i][csv_column] != str(excel_row[0].iloc[excel_column]).replace('.',
-                                                                                                                ','):
-                                    difference = True
-                                    print(f'{self.csv_data[i][csv_column]} != {str(excel_row[0].iloc[excel_column]
-                                                                                   ).replace('.', ',')}')
+                                if not self.include_special_prices.get():
+                                    csv_column = int(self.csv_base_price_column.get()) - 1
+                                    excel_column = int(self.excel_base_price_column.get()) - 1
+                                    if (self.csv_data[i][csv_column] != str(excel_row[0].iloc[excel_column]).replace
+                                        ('.', ',')):
+                                        difference = True
+                                        print(f'{self.csv_data[i][csv_column]} != {str(excel_row[0].iloc[excel_column]
+                                                                                       ).replace('.', ',')}')
+                                else:
+                                    special_price_found = False
+                                    for data in self.pdf_special_prices:
+                                        if search == data[0]:
+                                            if self.csv_data[i][int(self.csv_base_price_column.get()) - 1] != data[1]:
+                                                difference = True
+                                            special_price_found = True
+                                    if not special_price_found:
+                                        csv_column = int(self.csv_base_price_column.get()) - 1
+                                        excel_column = int(self.excel_base_price_column.get()) - 1
+                                        if self.csv_data[i][csv_column] != str(excel_row[0].iloc[excel_column]).replace(
+                                                '.',
+                                                ','):
+                                            difference = True
+                                            print(
+                                                f'{self.csv_data[i][csv_column]} != {str(excel_row[0].iloc[excel_column]
+                                                                                         ).replace('.', ',')}')
                             except Exception as e:
                                 messagebox.showwarning('Pam Price Tools - OSTRZEŻENIE:',
                                                        f'Błąd weryfikacji danych (Cena bazowa): {e}')
@@ -861,19 +1000,33 @@ class App:
                             try:
                                 csv_column = int(self.csv_catalogue_price_column.get()) - 1
                                 excel_column = int(self.excel_catalogue_price_column.get()) - 1
-                                if (not pd.isna(excel_row[0].iloc[excel_column]) and
-                                        excel_row[0].iloc[excel_column] != 0.0):
-                                    if (self.csv_data[i][csv_column] !=
-                                            str(excel_row[0].iloc[excel_column]).replace('.', ',')):
-                                        print(f'{self.csv_data[i][csv_column]} != {str(excel_row[0].iloc[excel_column]
-                                                                                       ).replace('.', ',')}')
-                                        difference = True
+                                if not self.include_special_prices.get():
+                                    if (not pd.isna(excel_row[0].iloc[excel_column]) and
+                                            excel_row[0].iloc[excel_column] != 0.0):
+                                        if (self.csv_data[i][csv_column] !=
+                                                str(excel_row[0].iloc[excel_column]).replace('.', ',')):
+                                            difference = True
+                                    else:
+                                        if (self.csv_data[i][csv_column] !=
+                                                self.csv_data[i][int(self.csv_base_price_column.get()) - 1]):
+                                            difference = True
                                 else:
-                                    if (self.csv_data[i][csv_column] !=
-                                            self.csv_data[i][int(self.csv_base_price_column.get()) - 1]):
-                                        print(f'{self.csv_data[i][csv_column]} != '
-                                              f'{self.csv_data[i][int(self.csv_base_price_column.get()) - 1]}')
-                                        difference = True
+                                    special_price_found = False
+                                    for data in self.pdf_special_prices:
+                                        if search == data[0]:
+                                            if self.csv_data[i][csv_column] != data[1]:
+                                                difference = True
+                                            special_price_found = True
+                                    if not special_price_found:
+                                        if (not pd.isna(excel_row[0].iloc[excel_column]) and
+                                                excel_row[0].iloc[excel_column] != 0.0):
+                                            if (self.csv_data[i][csv_column] !=
+                                                    str(excel_row[0].iloc[excel_column]).replace('.', ',')):
+                                                difference = True
+                                        else:
+                                            if (self.csv_data[i][csv_column] !=
+                                                    self.csv_data[i][int(self.csv_base_price_column.get()) - 1]):
+                                                difference = True
                             except Exception as e:
                                 messagebox.showwarning('Pam Price Tools - OSTRZEŻENIE:',
                                                        f'Błąd weryfikacji danych (Cena katalogowa): {e}')
@@ -953,6 +1106,8 @@ class App:
                                          f'Wykryto błąd podczas obliczania ilości kolumn pliku excel - {error}')
                     return
                 self.update_data_exchange_frame()
+            elif dropped_file.endswith('.pdf'):
+                self.pdf_raw_path.set(dropped_file)
             else:
                 messagebox.showinfo("Information", "Przeciągnięty plik nie jest plikiem CSV ani Excel.")
 

@@ -5,9 +5,24 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="74ebed60-b0e2-4468-941e-bb2d66c7508d" name="Changes" comment="- extending with pdf ocr reader (WIP)">
-      <change afterPath="$PROJECT_DIR$/test2.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dist/sample_excel.xlsm" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/sample_excel.xlsm" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/PamPriceTools/Analysis-00.toc" beforeDir="false" afterPath="$PROJECT_DIR$/build/PamPriceTools/Analysis-00.toc" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/PamPriceTools/EXE-00.toc" beforeDir="false" afterPath="$PROJECT_DIR$/build/PamPriceTools/EXE-00.toc" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/PamPriceTools/PKG-00.toc" beforeDir="false" afterPath="$PROJECT_DIR$/build/PamPriceTools/PKG-00.toc" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/PamPriceTools/PYZ-00.pyz" beforeDir="false" afterPath="$PROJECT_DIR$/build/PamPriceTools/PYZ-00.pyz" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/PamPriceTools/PYZ-00.toc" beforeDir="false" afterPath="$PROJECT_DIR$/build/PamPriceTools/PYZ-00.toc" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/PamPriceTools/PamPriceTools.pkg" beforeDir="false" afterPath="$PROJECT_DIR$/build/PamPriceTools/PamPriceTools.pkg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/PamPriceTools/warn-PamPriceTools.txt" beforeDir="false" afterPath="$PROJECT_DIR$/build/PamPriceTools/warn-PamPriceTools.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/PamPriceTools/xref-PamPriceTools.html" beforeDir="false" afterPath="$PROJECT_DIR$/build/PamPriceTools/xref-PamPriceTools.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/PamPriceTools.exe" beforeDir="false" afterPath="$PROJECT_DIR$/dist/PamPriceTools.exe" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sample_files/testowy_cennik.xlsm" beforeDir="false" afterPath="$PROJECT_DIR$/sample_files/testowy_cennik.xlsm" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/excel_handler.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/excel_handler.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/scripts/pdf_tools.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/pdf_tools.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/test.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test2.py" beforeDir="false" afterPath="$PROJECT_DIR$/test2.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -62,17 +77,19 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "git-widget-placeholder": "master",
     "ignore.virus.scanning.warn.message": "true",
-    "last_opened_file_path": "C:/Users/MSI/Documents/PythonProjects/PPT/sample_files",
+    "last_opened_file_path": "C:/Users/MSI/Documents/PythonProjects/PPT",
     "run.code.analysis.last.selected.profile": "aDefault"
   }
 }]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\MSI\Documents\PythonProjects\PPT" />
       <recent name="C:\Users\MSI\Documents\PythonProjects\PPT\sample_files" />
       <recent name="C:\Users\MSI\Documents\PythonProjects\PPT\dist" />
       <recent name="C:\Users\MSI\Documents\PythonProjects\PamPriceTools" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\MSI\Documents\PythonProjects\PPT\dist" />
       <recent name="C:\Users\MSI\Documents\PythonProjects\PPT" />
       <recent name="C:\Users\Wojtek\PycharmProjects\PamPriceTools" />
       <recent name="C:\Users\MSI\Documents\PythonProjects\PamPriceTools\scripts" />
@@ -382,7 +399,15 @@
       <option name="project" value="LOCAL" />
       <updated>1717676977281</updated>
     </task>
-    <option name="localTasksCounter" value="37" />
+    <task id="LOCAL-00037" summary="- extending with pdf ocr reader (WIP)">
+      <option name="closed" value="true" />
+      <created>1717679030321</created>
+      <option name="number" value="00037" />
+      <option name="presentableId" value="LOCAL-00037" />
+      <option name="project" value="LOCAL" />
+      <updated>1717679030321</updated>
+    </task>
+    <option name="localTasksCounter" value="38" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -419,13 +444,18 @@
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/scripts/excel_handler.py</url>
-          <line>58</line>
+          <line>56</line>
           <option name="timeStamp" value="17" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/scripts/pdf_tools.py</url>
-          <line>40</line>
-          <option name="timeStamp" value="19" />
+          <line>55</line>
+          <option name="timeStamp" value="20" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/test.py</url>
+          <line>5</line>
+          <option name="timeStamp" value="21" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
